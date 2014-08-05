@@ -1,0 +1,33 @@
+{
+  "name": "openvg-canvas",
+  "preferGlobal" : "true",
+  "version": "1.1.7",
+  "author": "Luis Reis <luis@luismreis.com> (http://luismreis.com/)",
+  "description": "Canvas on node-openvg",
+  "bin": {
+    "node-canvas" : "./bin/node-canvas"
+  },
+  "main": "lib/canvas.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/luismreis/node-openvg-canvas.git"
+  },
+  "keyword": [
+    "raspberry-pi",
+    "openvg",
+    "canvas"
+  ],
+  "dependencies": {
+    "openvg" : "~0.4.4"
+  },
+  "devDependencies": {
+    "tap": "*"
+  },
+  "license" : "MIT",
+  "engines": {
+    "node": ">=0.8"
+  },
+  "scripts": {
+    "test": "node node_modules/tap/bin/tap.js tests"
+  }
+}
