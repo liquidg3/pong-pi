@@ -1,0 +1,3 @@
+[submodule "vendors/liquidfire/modules/curium"]
+	path = vendors/liquidfire/modules/curium
+	url = git@github.com:liquidg3/liquidfire-curium.git
