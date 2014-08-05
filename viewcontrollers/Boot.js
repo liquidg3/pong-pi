@@ -1,5 +1,5 @@
 define(['altair/facades/declare',
-    'liquidfire/modules/curium/lib/ViewController'
+        'liquidfire/modules/curium/controllers/ViewController'
 ], function (declare, ViewController) {
 
     return declare([ViewController], {
@@ -50,6 +50,7 @@ define(['altair/facades/declare',
 
         },
 
+        //i just want to keep the logo hanging for a bit
         onStateMachineDidEnterSplash: function (e) {
 
             //this was passed from the last stage in the Splash state
@@ -62,11 +63,14 @@ define(['altair/facades/declare',
 
         },
 
+        //cleanup on exit
         onStateMachineDidExitSplash: function (e) {
 
             var logo = e.get('logo');
 
-            return logo.animate('alpha', 0, 500); //fade back out
+            return logo.animate('alpha', 0, 500).then(function () {  //fade back out
+                this.view.removeAllSubViews(); //cleanup for next state
+            }.bind(this));
 
         }
 
