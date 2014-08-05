@@ -1,12 +1,14 @@
 define(['altair/facades/declare',
-    'altair/mixins/_DeferredMixin',
-    'altair/mixins/_AssertMixin'
+        'liquidfire/modules/curium/models/App'
 ], function (declare,
-             _DeferredMixin,
-             _AssertMixin) {
+             App) {
 
-    return declare([_DeferredMixin, _AssertMixin], {
+    return declare([App], {
 
+        startup: function () {
+
+            return this.inherited(arguments);
+        }
 
     });
 

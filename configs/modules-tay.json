@@ -1,3 +1,5 @@
 {
-
+    "liquidfire:Curium": {
+        "$ref": "./curium-tay.json"
+    }
 }

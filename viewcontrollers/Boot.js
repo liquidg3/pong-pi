@@ -8,11 +8,14 @@ define(['altair/facades/declare',
          * Every controller uses an altair/StateMachine for state management
          */
         states:  ['splash', 'instructions'],
+        selectedColor: Math.floor(Math.random() * 3),
 
+        //use the "WillEnter" to load your resources; views, sounds, etc.
         onStateMachineWillEnterSplash: function (e) {
 
             //every view controller has a view property that represents its main view
-            this.view.backgroundColor = '#d8015e';
+            //i want it to be one of our colors
+            this.view.backgroundColor = ['#d8cb01', '#00ad3d', '#d8015e'][this.selectedColor];
 
             //this.all allows many async operations to take place at once
             //i'll use it to forge some stuff
@@ -20,56 +23,55 @@ define(['altair/facades/declare',
                 logo: this.forgeView('ImageView', {
                     backgroundColor: 'transparent', //default backgroundColor is #fff
                     image: 'assets/images/logo.png',
-                    alpha: 0 //i wanna fade this badboy in
+                    alpha: 0 //i wanna fade this badboy in later
                 })
-            }).then(function (objects) {
-
-                var logo = objects.logo;
-
-                //now that the logo view has been forged, it is sized to match the image
-                //i'll center it on screen (my view will default to the canvas size)
-                logo.frame.left = this.view.frame.width/2 - logo.frame.width/2;
-                logo.frame.top  = this.view.frame.height/2 - logo.frame.height/2;
-
-                this.view.addSubView(objects.logo);
-
-                return this.delay(2000, logo); //delay for 2 seconds, but pass through the logo
-
-            }.bind(this)).then(function (logo) {
-
-                return logo.animate('alpha', 1, 500); //animating is easy, you can pass any property and the ending value
-
-            }.bind(this)).then(function (logo) {
-
-                //pass logo through to next stage of splash state
-                return { logo: logo };
-
-            }.bind(this)).otherwise(function (err) {
+            }).otherwise(function (err) {
                 console.error(err.stack);
             });
 
         },
 
-        //i just want to keep the logo hanging for a bit
+        //now everything is ready for the splash state
         onStateMachineDidEnterSplash: function (e) {
 
-            //this was passed from the last stage in the Splash state
+            //this was passed from the last stage
             var logo = e.get('logo');
 
-            //lets keep the logo up for a sec
-            return this.delay(1000, logo).then(function (logo) { //wait for 1 second
-                return { logo: logo };
-            });
+            //i'll center it on screen (my view will default to the canvas size)
+            logo.frame.left = this.view.frame.width/2 - logo.frame.width/2;
+            logo.frame.top  = this.view.frame.height/2 - logo.frame.height/2;
+
+            //add it to view
+            this.view.addSubView(logo);
+
+            //delay for 2 seconds so the terminal finishes outputting (outputting text to the terminal slows UI)
+            return this.delay(2000, logo).then(function (logo) {
+
+                return logo.animate('alpha', 1, 500); //animating is easy, you can pass any property and the ending value
+
+            }).then(function (logo) {
+
+                //stay visible for a sec
+                return this.delay(1000, { logo: logo});
+
+            }.bind(this));
+
 
         },
 
-        //cleanup on exit
+        //fade out and cleanup on exit
         onStateMachineDidExitSplash: function (e) {
 
             var logo = e.get('logo');
 
             return logo.animate('alpha', 0, 500).then(function () {  //fade back out
-                this.view.removeAllSubViews(); //cleanup for next state
+
+//                this.view.removeAllSubViews(); //cleanup for next state
+
+                this.app.presentViewController('GameBoard', {
+                    startColor: this.selectedColor
+                });
+
             }.bind(this));
 
         }

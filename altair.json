@@ -37,5 +37,16 @@
                 }
             }
         }
+    },
+    "tay": {
+        "cartridges": {
+            "module":   {
+                "options": {
+                    "moduleOptions": {
+                        "$ref": "./configs/modules-tay.json"
+                    }
+                }
+            }
+        }
     }
 }
