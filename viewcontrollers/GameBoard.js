@@ -1,64 +1,86 @@
 define(['altair/facades/declare',
-        'liquidfire/modules/curium/controllers/ViewController',
-        'altair/facades/mixin'
+    'liquidfire/modules/curium/controllers/ViewController',
+    'altair/facades/mixin'
 ], function (declare, ViewController, mixin) {
 
     return declare([ViewController], {
 
         /**
-         * Every controller uses an altair/StateMachine for state management
+         * Every controller uses an altair/StateMachine for state management - https://github.com/liquidg3/altair/blob/master/docs/statemachine.md
          */
-        states:  ['game'],
-        colors:  [[216, 203, 1], [0, 173, 61], [216, 1, 94]],
-        leftPaddle: null,
-        rightPaddle: null,
-        paddleWidth: 10,
-        paddleHeight: 100,
-        currentColor: null,
+        states:                      ['game'],
+        colors:                      [
+            [216, 203, 1],
+            [0, 173, 61],
+            [216, 1, 94]
+        ],
+        leftPaddles:                 null,
+        rightPaddles:                null,
+        balls:                       null,
+        paddleWidth:                 10,
+        paddleHeight:                100,
+        ballRadius:                  20, //starting ball radius
+        currentColor:                null,
 
-        startup: function (options) {
+        //a view controller is a lifecycle object - https://github.com/liquidg3/altair/blob/master/docs/lifecycles.md
+        startup:                     function (options) {
+
             return this.inherited(arguments).then(function () {
 
+                //starting colors
                 this.currentColor = this.colors[options.startColor || 0];
                 this.view.backgroundColor = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
 
+                //beginning state
+                this.rightPaddles   = [];
+                this.leftPaddles    = [];
+                this.balls          = [];
+
+
                 return this;
-                
+
             }.bind(this));
         },
 
         //use the "WillEnter" to load your resources; views, sounds, etc.
         onStateMachineWillEnterGame: function (e) {
 
-
             this.animateBackgroundToNextColor();
 
             return this.all({
-                leftPaddle: this.forgePaddle({
+                ball:        this.forgeBall({
+                    frame: {
+                        width:  50,
+                        height: 50
+                    }
+                }),
+                leftPaddle:  this.forgePaddle({
                     frame: {
                         left: 10,
-                        top:  this.view.frame.height/2 - this.paddleHeight/2
+                        top:  this.view.frame.height / 2 - this.paddleHeight / 2
                     }
                 }),
                 rightPaddle: this.forgePaddle({
                     frame: {
                         left: this.view.frame.width - this.paddleWidth - 10,
-                        top:  this.view.frame.height/2 - this.paddleHeight/2
+                        top:  this.view.frame.height / 2 - this.paddleHeight / 2
                     }
                 })
             });
 
 
-            return this.delay(100000);
         },
 
         onStateMachineDidEnterGame: function (e) {
 
-            this.leftPaddle = e.get('leftPaddle');
-            this.rightPaddle = e.get('rightPaddle');
+            this.leftPaddles.push(e.get('leftPaddle'));
+            this.rightPaddle.push(e.get('rightPaddle'));
+            this.balls.push(e.get('balls'));
 
-            this.view.addSubView(this.leftPaddle);
-            this.view.addSubView(this.rightPaddle);
+            //add subviews to
+            this.view.addSubView(this.leftPaddles[0]);
+            this.view.addSubView(this.balls[0]);
+            this.view.addSubView(this.rightPaddles[0]);
 
         },
 
@@ -66,7 +88,7 @@ define(['altair/facades/declare',
 
             var _options = mixin({
                 backgroundColor: '#fff',
-                frame: {
+                frame:           {
                 }
             }, options || {});
 
@@ -74,6 +96,34 @@ define(['altair/facades/declare',
             _options.frame.height = this.paddleHeight;
 
             return this.forgeView(_options);
+
+        },
+
+        forgeBall: function (options) {
+
+            var _options = mixin({
+                backgroundColor: '#fff',
+                frame:           {
+                }
+            }, options || {});
+
+            _options.frame.width = this.ballRadius;
+            _options.frame.height = this.ballRadius;
+
+            return this.all({
+                ball:       this.forgeView(_options),
+                velocity:   this.forgeBehavior('Velocity')
+            }).then(function (all) {
+
+                var ball        = all.ball,
+                    velocity    = all.velocity;
+
+                ball.addBehavior(velocity);
+
+                return ball;
+
+            });
+
 
         },
 
@@ -105,8 +155,9 @@ define(['altair/facades/declare',
                 this.animateBackgroundToNextColor();
 
             })).otherwise(function (err) {
-
-            });
+                this.log('background coloring error');
+                this.log(err);
+            }.bind(this));
 
 
         }

@@ -39,6 +39,7 @@
         }
     },
     "tay": {
+       "debug.skip": false,
         "cartridges": {
             "module":   {
                 "options": {

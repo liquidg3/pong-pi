@@ -20,14 +20,14 @@ define(['altair/facades/declare',
             //this.all allows many async operations to take place at once
             //i'll use it to forge some stuff
             return this.all({
-                logo: this.forgeView('ImageView', {
+                logo: this.forgeView('Image', {
                     backgroundColor: 'transparent', //default backgroundColor is #fff
                     image: 'assets/images/logo.png',
                     alpha: 0 //i wanna fade this badboy in later
                 })
             }).otherwise(function (err) {
-                console.error(err.stack);
-            });
+                this.log(err);
+            }.bind(this));
 
         },
 
