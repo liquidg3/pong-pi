@@ -49,9 +49,11 @@ define(['altair/facades/declare',
 
             return this.all({
                 ball:        this.forgeBall({
+                    borderRadius: 25,
+                    clipping: true,
                     frame: {
-                        width:  50,
-                        height: 50
+                        left: this.view.frame.width / 2 - this.ballRadius  / 2,
+                        top: this.view.frame.height / 2 - this.ballRadius  / 2
                     }
                 }),
                 leftPaddle:  this.forgePaddle({
@@ -74,8 +76,8 @@ define(['altair/facades/declare',
         onStateMachineDidEnterGame: function (e) {
 
             this.leftPaddles.push(e.get('leftPaddle'));
-            this.rightPaddle.push(e.get('rightPaddle'));
-            this.balls.push(e.get('balls'));
+            this.rightPaddles.push(e.get('rightPaddle'));
+            this.balls.push(e.get('ball'));
 
             //add subviews to
             this.view.addSubView(this.leftPaddles[0]);
@@ -111,14 +113,17 @@ define(['altair/facades/declare',
             _options.frame.height = this.ballRadius;
 
             return this.all({
-                ball:       this.forgeView(_options),
-                velocity:   this.forgeBehavior('Velocity')
+                ball:       this.forgeView('Ball', _options),
+                velocity:   this.forgeBehavior('Velocity'),
+                collision:  this.forgeBehavior('Collision')
             }).then(function (all) {
 
                 var ball        = all.ball,
-                    velocity    = all.velocity;
+                    velocity    = all.velocity,
+                    collision   = all.collision;
 
                 ball.addBehavior(velocity);
+                ball.addBehavior(collision);
 
                 return ball;
 
