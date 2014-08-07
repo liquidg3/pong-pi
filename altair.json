@@ -4,7 +4,7 @@
         "glob": ["app/vendors/*/modules/*/tests/*.js"]
     },
     "default":        {
-
+        "debug":      false,
         "cartridges": {
             "database": {
                 "options": {
@@ -23,6 +23,7 @@
     },
 
     "dev": {
+        "debug":      "*",
         "cartridges": {
             "database": {
                 "options": {
@@ -39,10 +40,28 @@
         }
     },
     "tay": {
-       "debug.skip": false,
+        "debug":      "*",
         "cartridges": {
-            "module":   {
+            "module": {
                 "options": {
+                    "moduleOptions": {
+                        "$ref": "./configs/modules-tay.json"
+                    }
+                }
+            }
+        }
+    },
+
+    "web": {
+        "debug":      "*",
+           "paths": {
+               "dev": "/Users/taylorromero/Development/altair-dev"
+           },
+        "cartridges": {
+            "module": {
+                "options": {
+                    "modules":       [
+                        "liquidfire:Sockets",  "altair:TheForge", "liquidfire:Onyx", "titan:Alfred", "altair:TheLodge", "altair:CommandCentral", "altair:Adapters", "altair:Events"],
                     "moduleOptions": {
                         "$ref": "./configs/modules-tay.json"
                     }

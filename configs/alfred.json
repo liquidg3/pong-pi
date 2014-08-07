@@ -1,0 +1,35 @@
+{
+    "site": {
+        "strategy": "express3",
+        "options":  {
+            "port":   80,
+            "vendor": "pongpi",
+            "domain": "pongpi.local",
+            "dir":    "./web",
+            "media":  {
+                "css":  [
+                    "/public/css/reset.css",
+                    "//fonts.googleapis.com/css?family=Lato:100,300,400,900"
+                ],
+                "less": [
+                    "/public/less/index.less"
+                ],
+                "js":   [
+                    "/public/js/bower_components/angular/angular.js",
+                    "/public/js/GameController.js"
+                ]
+            },
+            "routes": {
+                "/": {
+                    "action":        "controllers/Index::index",
+                    "layoutContext": {
+                        "title":        "pong pi",
+                        "bodyClass":    "pong-pi",
+                        "ngController": "GameController"
+                    }
+                }
+            }
+
+        }
+    }
+}

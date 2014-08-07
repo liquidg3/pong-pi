@@ -7,7 +7,7 @@ define(['altair/facades/declare',
         /**
          * Every controller uses an altair/StateMachine for state management
          */
-        states:  ['splash', 'instructions'],
+        states:  ['splash'],
         selectedColor: Math.floor(Math.random() * 3),
 
         //use the "WillEnter" to load your resources; views, sounds, etc.
@@ -37,9 +37,11 @@ define(['altair/facades/declare',
             //this was passed from the last stage
             var logo = e.get('logo');
 
+//            console.log('didEnterSplash', logo);
+
             //i'll center it on screen (my view will default to the canvas size)
-            logo.frame.left = this.view.frame.width/2 - logo.frame.width/2;
-            logo.frame.top  = this.view.frame.height/2 - logo.frame.height/2;
+            logo.frame.left = this.view.frame.width / 2 - logo.frame.width / 2;
+            logo.frame.top  = this.view.frame.height / 2 - logo.frame.height / 2;
 
             //add it to view
             this.view.addSubView(logo);

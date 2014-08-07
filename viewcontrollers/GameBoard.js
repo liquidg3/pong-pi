@@ -19,7 +19,7 @@ define(['altair/facades/declare',
         balls:                       null,
         paddleWidth:                 10,
         paddleHeight:                100,
-        ballRadius:                  20, //starting ball radius
+        ballRadius:                  10, //starting ball radius
         currentColor:                null,
 
         //a view controller is a lifecycle object - https://github.com/liquidg3/altair/blob/master/docs/lifecycles.md
@@ -58,13 +58,13 @@ define(['altair/facades/declare',
                 }),
                 leftPaddle:  this.forgePaddle({
                     frame: {
-                        left: 10,
+                        left: 100,
                         top:  this.view.frame.height / 2 - this.paddleHeight / 2
                     }
                 }),
                 rightPaddle: this.forgePaddle({
                     frame: {
-                        left: this.view.frame.width - this.paddleWidth - 10,
+                        left: this.view.frame.width - this.paddleWidth - 100,
                         top:  this.view.frame.height / 2 - this.paddleHeight / 2
                     }
                 })

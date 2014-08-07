@@ -1,1 +1,5 @@
-{}
+{
+    "titan:Alfred": {
+        "$ref": "./alfred-dev.json"
+    }
+}

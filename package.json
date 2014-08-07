@@ -1,9 +1,22 @@
 {
-    "name":         "PongPi",
-    "description":  "This is a placeholder for a description about your app. To configure Altair, use altair.json",
+    "name": "PongPi",
+    "description": "This is a placeholder for a description about your app. To configure Altair, use altair.json",
     "version": "0.0.1",
-    "dependencies": {},
+    "dependencies": {
+        "consolidate": ">=0.10.x",
+        "ejs": ">=1.0.x",
+        "express": ">=3.x",
+        "less": ">=1.x",
+        "multiparty": "3.2.5",
+        "body-parser": ">=1.0.x",
+        "chai": "*",
+        "sockjs": ">=0.3.8",
+        "socket.io": "0.9.17",
+        "socket.io-client": "0.9.17"
+    },
     "altairDependencies": {
-        "liquidfire:Curium": ">=0.0.x"
+        "liquidfire:Curium": ">=0.0.x",
+        "liquidfire:Sockets": ">=0.0.x",
+        "titan:Alfred": ">=0.0.x"
     }
 }

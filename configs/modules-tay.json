@@ -1,5 +1,8 @@
 {
     "liquidfire:Curium": {
         "$ref": "./curium-tay.json"
+    },
+    "titan:Alfred": {
+        "$ref": "./alfred-dev.json"
     }
 }
