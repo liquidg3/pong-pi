@@ -1,13 +1,26 @@
 define(['altair/facades/declare',
-    'altair/mixins/_DeferredMixin',
-    'altair/mixins/_AssertMixin'
+        'altair/Lifecycle',
+        'altair/mixins/_AssertMixin'
 ], function (declare,
-             _DeferredMixin,
+             Lifecycle,
              _AssertMixin) {
 
-    return declare([_DeferredMixin, _AssertMixin], {
+    return declare([Lifecycle, _AssertMixin], {
 
+        connection: null,
+        side:       null,
+        username:   '',
+        startup: function (options) {
 
+            var _options = options || this.options || {};
+
+            this.connection = _options.connection;
+
+            this.assert(this.connection, 'you must pass a socket.io connection to your user');
+
+            return this.inherited(arguments);
+
+        }
 
 
     });

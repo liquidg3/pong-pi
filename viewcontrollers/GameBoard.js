@@ -27,6 +27,9 @@ define(['altair/facades/declare',
 
             return this.inherited(arguments).then(function () {
 
+                //listener for player joining
+                this.app.on('player-did-join', this.hitch('onPlayerDidJoin'));
+
                 //starting colors
                 this.currentColor = this.colors[options.startColor || 0];
                 this.view.backgroundColor = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
@@ -164,6 +167,14 @@ define(['altair/facades/declare',
                 this.log(err);
             }.bind(this));
 
+
+        },
+
+        onPlayerDidJoin: function (e) {
+
+            var player = e.get('player');
+
+            console.log('player joined', player.username);
 
         }
 

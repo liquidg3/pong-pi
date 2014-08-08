@@ -6,6 +6,7 @@ define(['altair/facades/declare',
     return declare([App], {
 
         _server: null,
+        _players: null,
         startup: function (options) {
 
             var _options = options || this.options || {},
@@ -13,6 +14,8 @@ define(['altair/facades/declare',
                 dev,
                 alias,
                 ip;
+
+            this._players = []; //initialize
 
             for (dev in ifaces) {
 
@@ -38,7 +41,6 @@ define(['altair/facades/declare',
 
                 server.on('connection').then(this.hitch('onDidConnect'));
                 server.on('disconnect').then(this.hitch('onDidDisconnect'));
-                server.on('picked-side').then(this.hitch('onDidPickSide'));
                 server.on('error', this.log.bind(this));
 
             }.bind(this));
@@ -50,16 +52,48 @@ define(['altair/facades/declare',
 
             var connection = e.get('connection');
 
+            this.forge('models/Player', {
+                connection: connection
+            }).then(function (player) {
+
+                this._players.push(player);
+                connection.player = player;
+
+            }.bind(this));
+
+            connection.on('picked-side', this.hitch('onDidPickSide', connection));
+            connection.on('enter-username', this.hitch('onDidEnterUsername', connection));
+            connection.on('join', this.hitch('joinGame', connection));
+
         },
 
         onDidDisconnect: function (e) {
 
+            var connection = e.get('connection');
+
+            console.log('on did disconnect', connection);
+
         },
 
-        onDidPickSide: function (e) {
+        onDidEnterUsername: function (connection, data) {
 
-            var connection = e.get('connection');
-            console.log(e.get('side'));
+            this.log('user picked username:', data.username);
+            connection.player.username = data.username;
+
+        },
+
+        onDidPickSide: function (connection, data) {
+
+            this.log('user picked side:', data.side);
+            connection.player.side = data.side;
+        },
+
+        joinGame: function (connection) {
+
+            this.emit('player-did-join', {
+                player: connection.player
+            });
+
         }
 
     });

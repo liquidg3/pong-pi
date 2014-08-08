@@ -3,8 +3,9 @@ var pongpi = angular.module('pong-pi', []);
 pongpi.controller('GameController', function ($scope) {
 
     $scope.side         = null; //left/right
-    $scope.user         = null; //user object
+    $scope.player       = null; //user object
     $scope.username     = '';
+    $scope.joined       = false;
 
     $scope.selectTeam = function (side) {
 
@@ -17,9 +18,17 @@ pongpi.controller('GameController', function ($scope) {
 
     };
 
-    $scope.joinGame = function () {
+    $scope.joinGame = function (username) {
 
-        alert($scope.username);
+        altair.sockets.emit('enter-username', {
+            username: username
+        });
+
+        $scope.player = {
+            username: username,
+            side: $scope.side,
+            score: 0
+        };
 
     };
 

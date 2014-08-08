@@ -19,14 +19,20 @@
     Select a Side
 </h1>
 
-<div data-ng-if="side && !user">
+<div data-ng-if="side && !player">
 
     <form class="username-wrapper">
 
         <label>enter your username</label>
-        <input type="text" data-ng-model="username" />
-        <button type="button" data-ng-click="joinGame()">Join</button>
+        <input type="text" data-ng-model="username"/>
+        <button type="button" data-ng-click="joinGame(username)">Join</button>
 
     </form>
 
+    {{userName}}
+
+</div>
+
+<div class="join-now" data-ng-if="side && player && !joined">
+    <button>Join Now!!</button>
 </div>
