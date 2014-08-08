@@ -8,17 +8,17 @@ define(['altair/facades/declare',
         _server: null,
         startup: function (options) {
 
+            var _options = options || this.options || {};
+
             this.nexus('liquidfire:Sockets').startupSocket('socketio', {
-                port: this.parent.get('port'),
-                host: this.parent.get('host'),
-                path: this.namespace()
+                port: 6789
             }).then(function (server) {
 
                 this._server = server;
 
-                server.on('connection').then(this.hitch('onDidConnect'));
-                server.on('disconnect').then(this.hitch('onDidDisconnect'));
-                server.on('error', this.log.bind(this));
+//                server.on('connection').then(this.hitch('onDidConnect'));
+//                server.on('disconnect').then(this.hitch('onDidDisconnect'));
+//                server.on('error', this.log.bind(this));
 
             }.bind(this));
 

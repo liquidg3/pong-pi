@@ -1,0 +1,42 @@
+{
+    "apollo":    {
+        "path":    "altair/cartridges/apollo/Apollo",
+        "options": {}
+    },
+    "nexus":     {
+        "path":    "altair/cartridges/nexus/Nexus",
+        "options": {}
+    },
+    "database":  {
+        "path":    "altair/cartridges/database/Database",
+        "options": {}
+    },
+    "module":    {
+        "path":    "altair/cartridges/module/Module",
+        "options": {
+            "modules":       ["altair:CommandCentral", "liquidfire:Sockets", "altair:Adapters", "altair:Events"],
+            "moduleOptions": {
+                "altair:CommandCentral": {
+                    "autostart": false
+                }
+            },
+            "paths":         ["tests/vendors/liquidfire/modules", "core/vendors/altair/modules"]
+        }
+    },
+    "extension": {
+        "path":    "altair/cartridges/extension/Extension",
+        "options": {
+            "extensions": [
+                "altair/cartridges/extension/extensions/Paths",
+                "altair/cartridges/extension/extensions/Config",
+                "altair/cartridges/extension/extensions/Package",
+                "altair/cartridges/extension/extensions/Deferred",
+                "altair/cartridges/extension/extensions/Apollo",
+                "altair/cartridges/extension/extensions/Nexus",
+                "altair/cartridges/extension/extensions/Events",
+                "altair/cartridges/extension/extensions/Foundry",
+                "altair/cartridges/extension/extensions/Log"
+            ]
+        }
+    }
+}

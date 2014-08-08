@@ -12,6 +12,7 @@
                 "name":    "socketio",
                 "options": {
                     "mode": "client",
+                    "port": 6789,
                     "host": "http://10.1.10.98",
                     "connectOnExecute": false
                 }

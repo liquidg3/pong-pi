@@ -54,7 +54,7 @@
 
     "web": {
         "debug":      "*",
-           "paths": {
+           "paths.skipped": {
                "dev": "/Users/taylorromero/Development/altair-dev"
            },
         "cartridges": {

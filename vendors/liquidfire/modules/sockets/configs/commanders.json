@@ -1,0 +1,24 @@
+{
+    "sockets": {
+
+        "path":         "commanders/Commander",
+        "description":  "Control your sockets!",
+        "label":        "Sockets",
+        "commands": {
+
+            "start": {
+                "label": "Start a socket server",
+                "description": "Get connected to your sockets on.",
+                "aliases": ["go"],
+                "schema": {
+                    "strategy": {
+                        "type": "select",
+                        "options": {
+                            "label": "Socket strategy"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

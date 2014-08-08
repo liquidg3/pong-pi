@@ -15,7 +15,6 @@
         "socket.io-client": "0.9.17"
     },
     "altairDependencies": {
-        "liquidfire:Curium": ">=0.0.x",
         "liquidfire:Sockets": ">=0.0.x",
         "titan:Alfred": ">=0.0.x"
     }

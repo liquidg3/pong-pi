@@ -1,0 +1,54 @@
+{
+    "properties": {
+        "port": {
+            "type":    "integer",
+            "options": {
+                "label":    "Port",
+                "required": true,
+                "default":  9999
+            }
+        },
+
+        "mode": {
+            "type":    "select",
+            "options": {
+                "label":    "Mode",
+                "required": true,
+                "default":  "server",
+                "choices":  {
+                    "server": "Server",
+                    "client": "Client",
+                    "relay":  "Relay"
+                }
+            }
+        },
+
+        "host": {
+            "type":    "string",
+            "options": {
+                "label":       "Host",
+                "default":     "http://localhost",
+                "description": "Where should I connect? This is used by clients (browser or other Altair apps)"
+            }
+        },
+
+        "path": {
+            "type":    "string",
+            "options": {
+                "label":       "Path",
+                "default":     "",
+                "description": "Optional path where the socket will listen (socket.io calls it a namespace). It should start with a '/' if set to anything."
+            }
+        },
+
+        "connectOnExecute": {
+            "type":    "boolean",
+            "options": {
+                "label":       "Connect on creation",
+                "description": "When creating a socket client, should I attempt to connect to the host automatically?",
+                "default":     true
+            }
+        }
+
+    }
+}
