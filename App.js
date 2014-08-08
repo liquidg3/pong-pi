@@ -40,7 +40,7 @@ define(['altair/facades/declare',
                 this._server = server;
 
                 server.on('connection').then(this.hitch('onDidConnect'));
-                server.on('disconnect').then(this.hitch('onDidDisconnect'));
+
                 server.on('error', this.log.bind(this));
 
             }.bind(this));
@@ -62,16 +62,15 @@ define(['altair/facades/declare',
             }.bind(this));
 
             connection.on('picked-side', this.hitch('onDidPickSide', connection));
+            connection.on('disconnect', this.hitch('onDidDisconnect', connection));
             connection.on('enter-username', this.hitch('onDidEnterUsername', connection));
             connection.on('join', this.hitch('joinGame', connection));
 
         },
 
-        onDidDisconnect: function (e) {
+        onDidDisconnect: function (connection) {
 
-            var connection = e.get('connection');
-
-            console.log('on did disconnect', connection);
+            console.log('on did disconnect', connection.player);
 
         },
 

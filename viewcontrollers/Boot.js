@@ -78,9 +78,6 @@ define(['altair/facades/declare',
 
         }
 
-
-
-
     });
 
 });

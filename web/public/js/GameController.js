@@ -18,7 +18,7 @@ pongpi.controller('GameController', function ($scope) {
 
     };
 
-    $scope.joinGame = function (username) {
+    $scope.enterUsername = function (username) {
 
         altair.sockets.emit('enter-username', {
             username: username
@@ -30,6 +30,13 @@ pongpi.controller('GameController', function ($scope) {
             score: 0
         };
 
+    };
+
+    $scope.join = function () {
+
+        alert('joining');
+        altair.sockets.emit('join');
+        $scope.joined = true;
     };
 
 

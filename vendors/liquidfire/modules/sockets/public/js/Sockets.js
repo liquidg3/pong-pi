@@ -75,10 +75,10 @@
          * @param message
          * @returns {*|Socket}
          */
-        Sockets.prototype.emit = function (name, data) {
+        Sockets.prototype.emit = function (name, data, cb) {
 
             this._assertAdapter();
-            return this._adapter.emit(name, data);
+            return this._adapter.emit(name, data, cb);
         };
 
         /**

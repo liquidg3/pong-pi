@@ -174,7 +174,7 @@ define(['altair/facades/declare',
 
             var player = e.get('player');
 
-            console.log('player joined', player.username);
+            console.log('player joined with username: ' +  player.username);
 
         }
 
