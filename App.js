@@ -40,7 +40,6 @@ define(['altair/facades/declare',
                 this._server = server;
 
                 server.on('connection').then(this.hitch('onDidConnect'));
-
                 server.on('error', this.log.bind(this));
 
             }.bind(this));
@@ -70,7 +69,11 @@ define(['altair/facades/declare',
 
         onDidDisconnect: function (connection) {
 
-            console.log('on did disconnect', connection.player);
+            this.emit('player-did-quit', {
+                player: connection.player
+            });
+
+            this._players.splice(this._players.indexOf(connection.player), 1);
 
         },
 

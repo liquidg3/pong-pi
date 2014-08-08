@@ -15,6 +15,7 @@
                     "/public/less/index.less"
                 ],
                 "js":   [
+                    "//code.jquery.com/jquery-1.11.0.min.js",
                     "/public/js/bower_components/angular/angular.js",
                     "/public/js/GameController.js"
                 ]

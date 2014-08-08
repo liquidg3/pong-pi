@@ -17,10 +17,13 @@ define(['altair/facades/declare',
         leftPaddles:                 null,
         rightPaddles:                null,
         balls:                       null,
+        paddleColumnWidth:           200,
         paddleWidth:                 10,
         paddleHeight:                100,
-        ballRadius:                  10, //starting ball radius
+        sidePadding:                 100,
+        ballRadius:                  10,    //starting ball radius
         currentColor:                null,
+        _players:                    null, //players by side
 
         //a view controller is a lifecycle object - https://github.com/liquidg3/altair/blob/master/docs/lifecycles.md
         startup:                     function (options) {
@@ -29,6 +32,7 @@ define(['altair/facades/declare',
 
                 //listener for player joining
                 this.app.on('player-did-join', this.hitch('onPlayerDidJoin'));
+                this.app.on('player-did-quit', this.hitch('onPlayerDidQuit'));
 
                 //starting colors
                 this.currentColor = this.colors[options.startColor || 0];
@@ -38,6 +42,7 @@ define(['altair/facades/declare',
                 this.rightPaddles   = [];
                 this.leftPaddles    = [];
                 this.balls          = [];
+                this._players       = {};
 
 
                 return this;
@@ -50,42 +55,9 @@ define(['altair/facades/declare',
 
             this.animateBackgroundToNextColor();
 
-            return this.all({
-                ball:        this.forgeBall({
-                    borderRadius: 25,
-                    clipping: true,
-                    frame: {
-                        left: this.view.frame.width / 2 - this.ballRadius  / 2,
-                        top: this.view.frame.height / 2 - this.ballRadius  / 2
-                    }
-                }),
-                leftPaddle:  this.forgePaddle({
-                    frame: {
-                        left: 100,
-                        top:  this.view.frame.height / 2 - this.paddleHeight / 2
-                    }
-                }),
-                rightPaddle: this.forgePaddle({
-                    frame: {
-                        left: this.view.frame.width - this.paddleWidth - 100,
-                        top:  this.view.frame.height / 2 - this.paddleHeight / 2
-                    }
-                })
-            });
-
-
         },
 
         onStateMachineDidEnterGame: function (e) {
-
-            this.leftPaddles.push(e.get('leftPaddle'));
-            this.rightPaddles.push(e.get('rightPaddle'));
-            this.balls.push(e.get('ball'));
-
-            //add subviews to
-            this.view.addSubView(this.leftPaddles[0]);
-            this.view.addSubView(this.balls[0]);
-            this.view.addSubView(this.rightPaddles[0]);
 
         },
 
@@ -97,8 +69,11 @@ define(['altair/facades/declare',
                 }
             }, options || {});
 
-            _options.frame.width = this.paddleWidth;
-            _options.frame.height = this.paddleHeight;
+            _options.frame.width    = _options.frame.width || this.paddleWidth;
+            _options.frame.top      = _options.frame.top || this.view.frame.height / 2 - this.paddleHeight / 2;
+            _options.frame.height   = _options.frame.height || this.paddleHeight;
+
+            this.log('forging paddle at', _options.frame);
 
             return this.forgeView(_options);
 
@@ -174,12 +149,98 @@ define(['altair/facades/declare',
 
             var player = e.get('player');
 
-            console.log('player joined with username: ' +  player.username);
+            this.addPlayer(player).otherwise(function (err) {
+                this.log('error adding player');
+                this.log(err);
+            }.bind(this));
+
+        },
+
+        onPlayerDidQuit: function (e) {
+
+            var player = e.get('player');
+
+            this.removePlayer(player);
+        },
+
+        addPlayer: function (player) {
+
+            if (!this._players[player.side]) {
+                this._players[player.side] = [];
+            }
+
+            this._players[player.side].unshift(player);
+
+            return this.all({
+                behavior: this.forgeBehavior('Paddle', {
+                    player: player
+                }),
+                paddle: this.forgePaddle({
+                    frame: {
+                        left: player.side === 'left' ? -this.paddleWidth : this.view.frame.width
+                    }
+                })
+            }).then(function (objects) {
+
+                player.paddle = objects.paddle;
+                player.paddle.addBehavior(objects.behavior);
+
+                this.view.addSubView(objects.paddle);
+
+                this.animatePaddlesIntoPlace();
+
+            }.bind(this));
+
+        },
+
+
+        removePlayer: function (player) {
+
+            var players = this._players[player.side] || [];
+
+            players.splice(players.indexOf(player), 1);
+
+            if (player.paddle) {
+                player.paddle.removeFromSuperView();
+                this.animatePaddlesIntoPlace();
+            }
+
+
+        },
+
+
+        animatePaddlesIntoPlace: function () {
+
+            _.each(['left', 'right'], function (side) {
+
+                _.each(this._players[side] || [], function (player) {
+
+                    player.paddle.animate('frame.left', this.paddleLeft(player), 1000);
+
+                }, this);
+
+            }, this);
+
+        },
+
+        paddleLeft: function (player) {
+
+            var left,
+                index = this._players[player.side].indexOf(player);
+
+            left = index * this.paddleColumnWidth;
+
+            if (player.side === 'right') {
+
+                left = this.view.frame.width - left - ((index + 1) * this.paddleWidth) - this.sidePadding;
+
+            } else {
+                left = left + this.sidePadding;
+            }
+
+            return left;
 
         }
-
-
-
 
 
     });

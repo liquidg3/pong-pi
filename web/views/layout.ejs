@@ -1,12 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>
-<html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html data-ng-app="pong-pi"> <!--<![endif]-->
+<html data-ng-app="pong-pi" data-ng-class="(joined) ? 'in-game' : ''"> <!--<![endif]-->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,13 +12,10 @@
 <body class="page-body <%= bodyClass %>" <% if(typeof ngController !== 'undefined') { %>data-ng-controller="<%= ngController %>"<% } %>>
 
 
-<div class="body-container">
+<% include partials/notices.ejs %>
 
-    <% include partials/notices.ejs %>
+<%- body %>
 
-    <%- body %>
-
-</div>
 
 <%- js %>
 </body>

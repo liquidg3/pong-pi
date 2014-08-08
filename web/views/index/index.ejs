@@ -1,3 +1,29 @@
+
+<div data-ng-if="side && !player">
+
+    <form class="username-wrapper" data-ng-submit="enterUsername(username)">
+
+        <label>enter your username</label>
+        <input type="text" data-ng-model="username"/>
+        <button type="button" data-ng-click="enterUsername(username)">Join</button>
+
+    </form>
+
+</div>
+
+<div class="join-now" data-ng-if="side && player && !joined">
+    <button type="button" data-ng-click="join()">Join Now!!</button>
+</div>
+
+<div data-ng-if="joined" id="game-board" onscroll="onScroll()" class="game-board">
+
+
+    <div class="paddle-scroll">
+
+    </div>
+
+</div>
+
 <div data-ng-click="selectTeam('left')" class="left-team side-select-column" data-ng-if="!side">
 
     <div class="icon">
@@ -17,32 +43,3 @@
 <h1 class="select-team" data-ng-if="!side">
     Select a Side
 </h1>
-
-<div data-ng-if="side && !player">
-
-    <form class="username-wrapper">
-
-        <label>enter your username</label>
-        <input type="text" data-ng-model="username"/>
-        <button type="button" data-ng-click="enterUsername(username)">Join</button>
-
-    </form>
-
-    {{userName}}
-
-</div>
-
-<div class="join-now" data-ng-if="side && player && !joined">
-    <button type="button" data-ng-click="join()">Join Now!!</button>
-</div>
-
-<div data-ng-if="joined" class="game-board">
-
-    <div class="paddle-scroll-wrapper">
-        <div class="paddle-scroll-inner">
-
-        </div>
-
-    </div>
-
-</div>

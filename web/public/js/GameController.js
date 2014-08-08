@@ -7,6 +7,25 @@ pongpi.controller('GameController', function ($scope) {
     $scope.username     = '';
     $scope.joined       = false;
 
+
+
+
+    onScroll = function () {
+
+        var max = $('.paddle-scroll').height() - $('.game-board').height(),
+            percent = $('.game-board').scrollTop() / max;
+
+
+        if ($scope.joined && max > 0) {
+
+            altair.sockets.emit('scroll', {
+                distance: percent
+            });
+        }
+
+
+    };
+
     $scope.selectTeam = function (side) {
 
         //pick a side
@@ -30,13 +49,16 @@ pongpi.controller('GameController', function ($scope) {
             score: 0
         };
 
+        $scope.join();
+
     };
 
     $scope.join = function () {
 
-        alert('joining');
         altair.sockets.emit('join');
         $scope.joined = true;
+
+
     };
 
 

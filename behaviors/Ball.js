@@ -7,6 +7,10 @@ define(['altair/facades/declare',
 
         startDirection: -1, //1 === right, -1 === left
 
+        construct: function (options) {
+
+        },
+
         step:  function (view, time) {
 
 
