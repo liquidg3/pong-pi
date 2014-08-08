@@ -107,8 +107,6 @@ define(['altair/facades/declare',
                 _router,
                 server;
 
-            console.log('server options', options);
-
             this.assert(!!this._strategies, 'You must call refreshStrategies before starting up a titan:Alfred web server.');
             this.assert(!!this._strategies[strategy], 'You must pass a valid web server strategy to titan:Alfred');
 

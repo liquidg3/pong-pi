@@ -21,12 +21,12 @@
 
 <div data-ng-if="side && !user">
 
-    <div class="username-wrapper">
+    <form class="username-wrapper">
 
         <label>enter your username</label>
         <input type="text" data-ng-model="username" />
-        <button>Join</button>
+        <button type="button" data-ng-click="joinGame()">Join</button>
 
-    </div>
+    </form>
 
 </div>
