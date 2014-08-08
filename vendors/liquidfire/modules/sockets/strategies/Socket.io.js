@@ -42,7 +42,7 @@ define(['altair/facades/declare',
                     this.log('setting up socket.io ' + this.get('mode') + ' @ ' + this.url());
 
                     //our js with path host settings, etc.
-                    this._js = ['https://cdn.socket.io/socket.io-1.0.6.js', '/public/_sockets/js/Sockets.js', '/public/_sockets/js/Socket.io.js?url=' + this.url()];
+                    this._js = ['//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', '/public/_sockets/js/Sockets.js', '/public/_sockets/js/Socket.io.js?url=' + this.url()];
 
                     //if we are in server modes
                     if (['server', 'relay'].indexOf(this.get('mode')) > -1) {

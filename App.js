@@ -11,7 +11,8 @@ define(['altair/facades/declare',
             var _options = options || this.options || {};
 
             this.nexus('liquidfire:Sockets').startupSocket('socketio', {
-                port: 6789
+                port: 6789,
+                host: '10.1.10.98'
             }).then(function (server) {
 
                 this._server = server;
