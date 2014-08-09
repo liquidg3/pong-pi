@@ -231,7 +231,7 @@ define(['altair/facades/declare',
             } else {
 
                 this._http = http.createServer();
-                this._server = io.listen(this._http, { path: this.get('path')});
+                this._server = io.listen(this._http, { path: this.get('path'), log: false });
 
                 this._http.on('error', function (err) {
                     console.log(err);

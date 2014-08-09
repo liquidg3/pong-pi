@@ -23,6 +23,8 @@ html {
   left: 15%;
   right: 15%;
   padding: 40px 0;
+  font-size: 30px;
+  font-weight: bold;
 }
 .side-select-column.left-team {
   background-color: #d8cb01;
@@ -33,8 +35,8 @@ html {
 }
 h1.select-team {
   text-align: center;
-  font-size: 100px;
-  font-weight: 200;
+  font-size: 50px;
+  font-weight: 300;
   top: 20px;
   position: relative;
 }

@@ -15,7 +15,7 @@ define(['altair/facades/declare',
 
         },
 
-        step:  function (view, time) {
+        step:  function (time) {
 
             this.view.frame.top = this.top;
 

@@ -23,7 +23,7 @@
     },
 
     "dev": {
-        "debug":      "*",
+        "debug":      "*, -express:*",
         "cartridges": {
             "database": {
                 "options": {

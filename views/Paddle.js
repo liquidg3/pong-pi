@@ -1,18 +1,11 @@
 define(['altair/facades/declare',
-        'altair/Lifecycle',
         'liquidfire/modules/curium/views/View'
 ], function (declare,
-             Lifecycle,
              View) {
 
-    return declare([View, Lifecycle], {
+    return declare([View], {
 
-        render: function (context) {
-
-            this.inherited(arguments);
-
-
-        }
+        isPaddle: true
 
     });
 

@@ -1,11 +1,9 @@
 define(['altair/facades/declare',
-        'altair/Lifecycle',
         'liquidfire/modules/curium/views/Circle'
 ], function (declare,
-             Lifecycle,
-             View) {
+             Circle) {
 
-    return declare([View, Lifecycle], {
+    return declare([Circle], {
 
         render: function (context) {
 
