@@ -29,23 +29,17 @@ define(['altair/facades/declare',
 
             return this.inherited(arguments).then(function () {
 
-                //listener for player joining
-                this.app.on('player-did-join', this.hitch('onPlayerDidJoin'));
-                this.app.on('player-did-quit', this.hitch('onPlayerDidQuit'));
-
-                //scoring
-                this.on('score').then(this.hitch('onDidScore'));
-
-                //starting colors
-                this.currentColor           = this.colors[options.startColor || 0];
-                this.view.backgroundColor   = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
-
                 //beginning state
                 this.balls          = [];
                 this.players        = {
                     left: [],
                     right: []
                 };
+
+
+                //starting colors
+                this.currentColor           = this.colors[options.startColor || 0];
+                this.view.backgroundColor   = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
 
                 //pre-load instruction views
                 return this.all({
@@ -67,6 +61,15 @@ define(['altair/facades/declare',
 
                 this.view.addSubView(this.leftInstructions);
                 this.view.addSubView(this.rightInstructions);
+
+
+                //listener for player joining
+                this.app.on('player-did-join', this.hitch('onPlayerDidJoin'));
+                this.app.on('player-did-quit', this.hitch('onPlayerDidQuit'));
+
+                //scoring
+                this.on('score').then(this.hitch('onDidScore'));
+                this.on('paddle-collision', this.hitch('onDidHitPaddle'));
 
                 return this;
 
@@ -116,8 +119,6 @@ define(['altair/facades/declare',
             _options.frame.width    = _options.frame.width || this.paddleWidth;
             _options.frame.top      = _options.frame.top || this.view.frame.height / 2 - this.paddleHeight / 2;
             _options.frame.height   = _options.frame.height || this.paddleHeight;
-
-            console.log('forging paddle at', _options.frame);
 
             return this.all({
                 paddle:     this.forgeView('Paddle', _options),
@@ -240,6 +241,7 @@ define(['altair/facades/declare',
             }).then(function (objects) {
 
                 player.paddle = objects.paddle;
+                objects.paddle.player = player;
                 player.paddle.addBehavior(objects.behavior);
 
                 this.view.addSubView(objects.paddle);
@@ -265,12 +267,10 @@ define(['altair/facades/declare',
             players.splice(players.indexOf(player), 1);
 
             if (player.paddle) {
-
                 player.paddle.teardown();
-                this.rebuildBoard();
-
             }
 
+            this.rebuildBoard();
 
         },
 
@@ -281,6 +281,8 @@ define(['altair/facades/declare',
 
             if (this.players.left.length > 0 && this.players.right.length > 0 && this.balls.length === 0) {
                 setTimeout(this.hitch('dropBall'), 2000);
+            } else if (this.players.left.length === 0 || this.players.right.length === 0 && this.balls.length > 0) {
+                _.each(this.balls, this.hitch('teardownBall'));
             }
 
         },
@@ -312,7 +314,9 @@ define(['altair/facades/declare',
                 left = this.view.frame.width - left - ((index + 1) * this.paddleWidth) - this.sidePadding;
 
             } else {
+
                 left = left + this.sidePadding;
+
             }
 
             return left;
@@ -321,17 +325,25 @@ define(['altair/facades/declare',
 
         teardownBall: function (ball) {
 
-            ball.teardown();
-            this.balls.splice(this.balls.indexOf(ball), 1);
+            if (ball) {
+                this.balls.splice(this.balls.indexOf(ball), 1);
+                ball.teardown();
+            } else {
+                console.log('tearing down a ball that does not exist');
+            }
 
         },
 
         dropBall: function () {
 
-            //drop another ball in 3 seconds
-            return this.forgeBall().then(function (ball) {
-                this.view.addSubView(ball);
-            }.bind(this));
+            if (this.players.left.length > 0 && this.players.right.length > 0) {
+
+                //drop another ball in 3 seconds
+                return this.forgeBall().then(function (ball) {
+                    this.view.addSubView(ball);
+                }.bind(this));
+
+            }
 
         },
 
@@ -343,6 +355,18 @@ define(['altair/facades/declare',
 
             setTimeout(this.hitch('dropBall'), 2000);
 
+            //give a point to all players on the side that scored
+            _.each(this.players[e.get('side')], function (player) {
+                player.score(1);
+            });
+
+
+        },
+
+        onDidHitPaddle: function (e) {
+
+            var player = e.get('player');
+            player.score(1);
 
         }
 

@@ -8,6 +8,12 @@ pongpi.controller('GameController', function ($scope) {
     $scope.joined       = false;
 
 
+    altair.sockets.on('score', function (e) {
+
+        $scope.player.score += e.get('points');
+        $scope.$apply();
+
+    });
 
 
     onScroll = function () {
@@ -22,7 +28,6 @@ pongpi.controller('GameController', function ($scope) {
                 distance: percent
             });
         }
-
 
     };
 

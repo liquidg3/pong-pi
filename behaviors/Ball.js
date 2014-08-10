@@ -54,7 +54,7 @@ define(['altair/facades/declare',
             else if (view.frame.left + view.frame.width >= view.vc.view.frame.width) {
 
                 this.view.vc.emit('score', {
-                    side: 'right',
+                    side: 'left', //the left side scores if it goes to the right
                     behavior: this,
                     ball: this.view
                 });
@@ -64,7 +64,7 @@ define(['altair/facades/declare',
             else if (view.frame.left <= 0) {
 
                 view.vc.emit('score', {
-                    side: 'left',
+                    side: 'right', //the right side scores if it goes to the left
                     behavior: this,
                     ball: this.view
                 });
@@ -81,9 +81,24 @@ define(['altair/facades/declare',
 
         onDidCollide: function (e) {
 
-            var view = e.get('view');
-
             this.velocity.direction = e.get('angleOfReflection') + ((Math.random() - 0.5) * 16);
+
+
+            var collisions = e.get('collisions');
+
+            _.each(collisions, function (collision) {
+
+                var view = collision.view;
+
+                if (view.isPaddle) {
+
+                    this.vc.emit('paddle-collision', {
+                        paddle: view,
+                        player: view.player
+                    });
+                }
+
+            }, this);
         },
 
         setView: function (view) {
