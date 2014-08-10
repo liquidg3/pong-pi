@@ -10,6 +10,7 @@ define(['altair/facades/declare',
         connection: null,
         side:       null,
         username:   '',
+        paddleColor: '',
         _score:      0,
         startup: function (options) {
 

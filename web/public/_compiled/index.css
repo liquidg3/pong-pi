@@ -64,3 +64,15 @@ h1.select-team {
   text-align: center;
   padding-top: 100px;
 }
+.colors {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+}
+.colors .block {
+  width: 50%;
+  height: 33.3%;
+  float: left;
+}
