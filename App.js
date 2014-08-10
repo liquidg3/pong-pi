@@ -67,6 +67,15 @@ define(['altair/facades/declare',
             connection.on('disconnect', this.hitch('onDidDisconnect', connection));
             connection.on('enter-username', this.hitch('onDidEnterUsername', connection));
             connection.on('join', this.hitch('joinGame', connection));
+            connection.on('color', this.hitch('setColor', connection));
+
+        },
+
+        setColor: function (connection, data) {
+
+            //set color to the user
+            this.log(connection.player.username + ' selected color ' + data.color);
+            connection.player.paddleColor = data.color;
 
         },
 

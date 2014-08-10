@@ -6,7 +6,7 @@ pongpi.controller('GameController', function ($scope) {
     $scope.player       = null; //user object
     $scope.username     = '';
     $scope.joined       = false;
-
+    $scope.colors       = ['#dfd9b5', '#a4897e', '#a4897e', '#00525e', '#1a303b'];
 
     altair.sockets.on('score', function (e) {
 
@@ -51,11 +51,23 @@ pongpi.controller('GameController', function ($scope) {
         $scope.player = {
             username: username,
             side: $scope.side,
-            score: 0
+            score: 0,
+            color: false
         };
 
-        $scope.join();
+        alert('pick a color');
 
+    };
+
+    $scope.selectColor = function (color) {
+
+        $scope.player.color = color;
+
+        altair.sockets.emit('color', {
+            color: color
+        });
+
+        this.join();
     };
 
     $scope.join = function () {

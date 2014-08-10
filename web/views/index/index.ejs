@@ -11,8 +11,10 @@
 
 </div>
 
-<div class="join-now" data-ng-if="side && player && !joined">
-    <button type="button" data-ng-click="join()">Join Now!!</button>
+<div class="colors" data-ng-if="side && player && !player.color">
+
+    <div class="block" data-ng-repeat="color in colors track by $index" style="background-color: {{color}}" data-ng-click="selectColor(color)"></div>
+
 </div>
 
 <div data-ng-if="joined" id="game-board" onscroll="onScroll()" class="game-board">

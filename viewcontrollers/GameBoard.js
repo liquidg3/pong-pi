@@ -348,6 +348,7 @@ define(['altair/facades/declare',
                     player: player
                 }),
                 paddle: this.forgePaddle({
+                    backgroundColor: player.paddleColor,
                     frame: {
                         left: player.side === 'left' ? -this.paddleWidth : this.view.frame.width
                     }
