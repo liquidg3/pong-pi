@@ -21,7 +21,7 @@ define(['altair/facades/declare',
                 }),
                 ip: _options.vc.forgeView('Label', {
                     text:       'http://' + _options.vc.app.ip,
-                    font:       '60px sansarif',
+                    font:       '40px sansarif',
                     textColor:  '#fff',
                     textAlign:  'center',
                     backgroundColor: 'transparent'
