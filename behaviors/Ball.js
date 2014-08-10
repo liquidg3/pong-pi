@@ -33,6 +33,8 @@ define(['altair/facades/declare',
                     this.velocity.direction -= 180;
                 }
 
+this.velocity.direction = 0;
+
                 return this;
 
             }.bind(this));
@@ -88,7 +90,12 @@ define(['altair/facades/declare',
 
         onDidCollide: function (e) {
 
-            var collisions = e.get('collisions');
+            var collisions = e.get('collisions'),
+                paddleMidpoint,
+                ballMidpoint,
+                paddleHeight,
+                reflectionMultiplier,
+                reflectionLimiter = 75;
 
             _.each(collisions, function (collision) {
 
@@ -96,7 +103,23 @@ define(['altair/facades/declare',
 
                 if (view.isPaddle) {
 
-                    this.velocity.direction = e.get('angleOfReflection') + ((Math.random() - 0.5) * 16);
+                    //we're colliding with a paddle, now what?
+                    //well, we need to determine which side of the paddle we're on.. top or bottom?
+                    paddleMidpoint = {
+                        //x: view.frame.left + (view.frame.width / 2) //we dont need x information for this use case
+                        y: view.frame.top + (view.frame.height/2)
+                    };
+
+                    ballMidpoint = {
+                        //x: this.view.frame.left + (this.view.frame.width / 2) //we dont need x information for this use case
+                        y: this.view.frame.top + (this.view.frame.height / 2)
+                    };
+
+                    paddleHeight = view.frame.height;
+
+                    reflectionMultiplier = -(ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
+
+                    this.velocity.direction = e.get('angleOfReflection') + (reflectionLimiter /*how far we can deviate from actual reflection*/ * reflectionMultiplier);
                     this.lastPlayer         = view.player;
 
                     this.vc.emit('paddle-collision', {
