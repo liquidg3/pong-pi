@@ -45,9 +45,11 @@ define(['altair/facades/declare',
             var view = this.view;
 
             //our we at the bottom?
-            if (view.frame.top + view.frame.height >= view.vc.view.frame.height) {
+            if (view.frame.top + view.frame.height > view.vc.view.frame.height) {
 
-                this.velocity.ySpeed *= -1;
+                view.frame.top = view.vc.view.frame.height - view.frame.height;
+
+                this.velocity.direction = -this.velocity.direction;
 
             }
             //off to the right
@@ -71,8 +73,12 @@ define(['altair/facades/declare',
 
             }
             //off the top
-            else if (view.frame.top <= 0) {
-                this.velocity.ySpeed *= -1;
+            else if (view.frame.top < 0) {
+
+                view.frame.top = view.vc.view.frame.top;
+
+                this.velocity.direction = -this.velocity.direction;
+
             }
 
             return this.inherited(arguments);
