@@ -33,8 +33,6 @@ define(['altair/facades/declare',
                     this.velocity.direction -= 180;
                 }
 
-this.velocity.direction = 0;
-
                 return this;
 
             }.bind(this));
