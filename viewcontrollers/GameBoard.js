@@ -1,7 +1,8 @@
 define(['altair/facades/declare',
-    'liquidfire/modules/curium/controllers/ViewController',
-    'altair/facades/mixin'
-], function (declare, ViewController, mixin) {
+        'liquidfire/modules/curium/controllers/ViewController',
+        'altair/facades/mixin',
+        'lodash'
+], function (declare, ViewController, mixin, _) {
 
     return declare([ViewController], {
 
@@ -23,7 +24,7 @@ define(['altair/facades/declare',
         sidePadding:                 100,
         ballRadius:                  10,    //starting ball radius
         currentColor:                null,
-        _players:                    null, //players by side
+        players:                    null, //players by side
 
         //a view controller is a lifecycle object - https://github.com/liquidg3/altair/blob/master/docs/lifecycles.md
         startup:                     function (options) {
@@ -45,8 +46,29 @@ define(['altair/facades/declare',
                 this.rightPaddles   = [];
                 this.leftPaddles    = [];
                 this.balls          = [];
-                this._players       = {};
+                this.players        = {};
 
+
+                //pre-load instruction views
+                return this.all({
+                    leftInstructions: this.forgeView('Instructions', {
+                        frame: _.clone(this.view.frame)
+                    }),
+                    rightInstructions: this.forgeView('Instructions', {
+                        frame: _.clone(this.view.frame)
+                    })
+                });
+
+            }.bind(this)).then(function (views) {
+
+                declare.safeMixin(this, views);
+
+                //place views
+                this.leftInstructions.frame.width   = this.rightInstructions.frame.width = this.view.frame.width / 2;
+                this.rightInstructions.frame.left   = this.view.frame.width / 2;
+
+                this.view.addSubView(this.leftInstructions);
+                this.view.addSubView(this.rightInstructions);
 
                 return this;
 
@@ -57,16 +79,16 @@ define(['altair/facades/declare',
         onStateMachineWillEnterGame: function (e) {
 
             this.animateBackgroundToNextColor();
-
+//
         },
 
         onStateMachineDidEnterGame: function (e) {
 
 //            var dfd = new this.Deferred();
 //
-            this.forgeBall().then(function (ball) {
-                this.view.addSubView(ball);
-            }.bind(this));
+//            this.forgeBall().then(function (ball) {
+//                this.view.addSubView(ball);
+//            }.bind(this));
 //
 //            return dfd;
 
@@ -90,6 +112,7 @@ define(['altair/facades/declare',
                     group: this.collisionGroup()
                 })
             }).then(function (objects) {
+
                 var paddle = objects.paddle;
                 paddle.addBehavior(objects.collision);
 
@@ -189,11 +212,11 @@ define(['altair/facades/declare',
 
         addPlayer: function (player) {
 
-            if (!this._players[player.side]) {
-                this._players[player.side] = [];
+            if (!this.players[player.side]) {
+                this.players[player.side] = [];
             }
 
-            this._players[player.side].unshift(player);
+            this.players[player.side].unshift(player);
 
             return this.all({
                 behavior: this.forgeBehavior('Paddle', {
@@ -212,21 +235,33 @@ define(['altair/facades/declare',
                 this.view.addSubView(objects.paddle);
 
                 this.animatePaddlesIntoPlace();
+                this.toggleInstructions();
 
             }.bind(this));
+
+        },
+
+        toggleInstructions: function () {
+
+            this.leftInstructions.hidden = (this.players.left && this.players.left.length > 0);
+            this.rightInstructions.hidden = (this.players.right && this.players.right.length > 0);
+
 
         },
 
 
         removePlayer: function (player) {
 
-            var players = this._players[player.side] || [];
+            var players = this.players[player.side] || [];
 
             players.splice(players.indexOf(player), 1);
 
             if (player.paddle) {
+
                 player.paddle.teardown();
+
                 this.animatePaddlesIntoPlace();
+                this.toggleInstructions();
             }
 
 
@@ -237,7 +272,7 @@ define(['altair/facades/declare',
 
             _.each(['left', 'right'], function (side) {
 
-                _.each(this._players[side] || [], function (player) {
+                _.each(this.players[side] || [], function (player) {
 
                     player.paddle.animate('frame.left', this.paddleLeft(player), 1000);
 
@@ -250,7 +285,7 @@ define(['altair/facades/declare',
         paddleLeft: function (player) {
 
             var left,
-                index = this._players[player.side].indexOf(player);
+                index = this.players[player.side].indexOf(player);
 
             left = index * this.paddleColumnWidth;
 

@@ -6,7 +6,7 @@ define(['altair/facades/declare',
     return declare([App], {
 
         _server: null,
-        _players: null,
+        players: null,
         startup: function (options) {
 
             var _options = options || this.options || {},
@@ -15,7 +15,7 @@ define(['altair/facades/declare',
                 alias,
                 ip;
 
-            this._players = []; //initialize
+            this.players = []; //initialize
 
             for (dev in ifaces) {
 
@@ -32,6 +32,9 @@ define(['altair/facades/declare',
                 throw new Error('App could not detect IP');
             }
 
+            this.ip = ip;
+
+//
             this.nexus('liquidfire:Sockets').startupSocket('socketio', {
                 port: 6789,
                 host: 'http://' + ip
@@ -55,7 +58,7 @@ define(['altair/facades/declare',
                 connection: connection
             }).then(function (player) {
 
-                this._players.push(player);
+                this.players.push(player);
                 connection.player = player;
 
             }.bind(this));
@@ -73,7 +76,7 @@ define(['altair/facades/declare',
                 player: connection.player
             });
 
-            this._players.splice(this._players.indexOf(connection.player), 1);
+            this.players.splice(this.players.indexOf(connection.player), 1);
 
         },
 
