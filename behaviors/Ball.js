@@ -10,6 +10,7 @@ define(['altair/facades/declare',
         startDirection: -1, //1 === right, -1 === left
         velocity:       null,
         collision:      null,
+        lastPlayer:     null,
 
         startup: function (options) {
             this.deferred = this.all({
@@ -87,9 +88,6 @@ define(['altair/facades/declare',
 
         onDidCollide: function (e) {
 
-            this.velocity.direction = e.get('angleOfReflection') + ((Math.random() - 0.5) * 16);
-
-
             var collisions = e.get('collisions');
 
             _.each(collisions, function (collision) {
@@ -98,10 +96,14 @@ define(['altair/facades/declare',
 
                 if (view.isPaddle) {
 
+                    this.velocity.direction = e.get('angleOfReflection') + ((Math.random() - 0.5) * 16);
+                    this.lastPlayer         = view.player;
+
                     this.vc.emit('paddle-collision', {
                         paddle: view,
                         player: view.player
                     });
+
                 }
 
             }, this);

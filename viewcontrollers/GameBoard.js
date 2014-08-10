@@ -15,14 +15,18 @@ define(['altair/facades/declare',
             [0, 173, 61],
             [216, 1, 94]
         ],
-        balls:                       null,
-        paddleColumnWidth:           200,
-        paddleWidth:                 10,
-        paddleHeight:                100,
-        sidePadding:                 100,
+        balls:                       null,  //all the active balls
+        paddleColumnWidth:           200,   //each player fits into a column, this is that columns width (the smaller, the closer each paddle will be)
+        paddleWidth:                 10,    //how wide is the paddle?
+        paddleHeight:                100,   //how tall is the paddle?
+        sidePadding:                 100,   //how far in from the side will each paddle start
         ballRadius:                  10,    //starting ball radius
-        currentColor:                null,
-        players:                    null, //players by side
+        currentColor:                null,  //background color tracking
+        players:                     null,  //players by side
+
+        powerUps:                    null,
+        powerUpInterval:             10000, //how often will power ups drop into place
+        _powerUpInterval:            null,
 
         //a view controller is a lifecycle object - https://github.com/liquidg3/altair/blob/master/docs/lifecycles.md
         startup:                     function (options) {
@@ -31,27 +35,44 @@ define(['altair/facades/declare',
 
                 //beginning state
                 this.balls          = [];
+                this.powerUps       = [];
                 this.players        = {
                     left: [],
                     right: []
                 };
 
-
                 //starting colors
                 this.currentColor           = this.colors[options.startColor || 0];
                 this.view.backgroundColor   = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
 
-                //pre-load instruction views
-                return this.all({
-                    leftInstructions: this.forgeView('Instructions', {
-                        frame: _.clone(this.view.frame)
-                    }),
-                    rightInstructions: this.forgeView('Instructions', {
-                        frame: _.clone(this.view.frame)
-                    })
-                });
+                //listener for player joining
+                this.app.on('player-did-join', this.hitch('onPlayerDidJoin'));
+                this.app.on('player-did-quit', this.hitch('onPlayerDidQuit'));
 
-            }.bind(this)).then(function (views) {
+                //scoring
+                this.on('score').then(this.hitch('onDidScore'));
+                this.on('paddle-collision', this.hitch('onDidHitPaddle'));
+                this.on('power-up-collision', this.hitch('onDidHitPowerUp'));
+
+                return this;
+
+            }.bind(this));
+        },
+
+        //use the "WillEnter" to load your resources; views, sounds, etc.
+        onStateMachineWillEnterGame: function (e) {
+
+            this.animateBackgroundToNextColor();
+
+            //pre-load instruction views
+            return this.all({
+                leftInstructions: this.forgeView('Instructions', {
+                    frame: _.clone(this.view.frame)
+                }),
+                rightInstructions: this.forgeView('Instructions', {
+                    frame: _.clone(this.view.frame)
+                })
+            }).then(function (views) {
 
                 declare.safeMixin(this, views);
 
@@ -63,22 +84,8 @@ define(['altair/facades/declare',
                 this.view.addSubView(this.rightInstructions);
 
 
-                //listener for player joining
-                this.app.on('player-did-join', this.hitch('onPlayerDidJoin'));
-                this.app.on('player-did-quit', this.hitch('onPlayerDidQuit'));
-
-                //scoring
-                this.on('score').then(this.hitch('onDidScore'));
-                this.on('paddle-collision', this.hitch('onDidHitPaddle'));
-
-                return this;
-
             }.bind(this));
-        },
 
-        //use the "WillEnter" to load your resources; views, sounds, etc.
-        onStateMachineWillEnterGame: function (e) {
-            this.animateBackgroundToNextColor();
         },
 
         onStateMachineDidEnterGame: function (e) {
@@ -108,6 +115,12 @@ define(['altair/facades/declare',
 
         },
 
+        /**
+         * Forge a paddle.
+         *
+         * @param options
+         * @returns {*|Promise}
+         */
         forgePaddle: function (options) {
 
             var _options = mixin({
@@ -136,10 +149,103 @@ define(['altair/facades/declare',
 
         },
 
+        /**
+         * The collision group for this game board. If we ever had multiple game boards at once, we'd need to make this
+         * random.
+         *
+         * @returns {string}
+         */
         collisionGroup: function () {
             return 'group-group';
         },
 
+        /**
+         * Forge yourself a random powerup at a random spot. It will not be dropped onto the board
+         *
+         * @returns {*|Promise}
+         */
+        forgePowerUp: function () {
+
+            var rand    = Math.round(Math.random()),
+                image   = '',
+                behavior;
+
+            switch (rand) {
+            case 0:
+                image       = 'assets/images/lightning.png';
+                behavior    = 'FastBall';
+                break;
+            case 1:
+                image       = 'assets/images/scale.png';
+                behavior    = 'PaddleGrowth';
+                break;
+            }
+
+            return this.all({
+                behavior: this.forgeBehavior(behavior),
+                view: this.forgeView('Image', {
+                    image:           image,
+                    backgroundColor: 'transparent',
+                    frame: {
+                        left: Math.random() * this.view.frame.width / 2 + this.view.frame.width / 4,
+                        top:  Math.random() * this.view.frame.height / 2 + this.view.frame.height / 4
+                    }
+                })
+            }).then(function (objects) {
+
+                objects.view.addBehavior(objects.behavior);
+                return objects.view;
+
+            });
+
+        },
+
+        /**
+         * Drop a powerup
+         */
+        dropPowerUp: function () {
+
+            this.forgePowerUp().then(function (powerUp) {
+
+                this.powerUps.push(powerUp);
+                this.view.addSubView(powerUp);
+
+            }.bind(this));
+
+        },
+
+        disablePowerUps: function () {
+
+            if (this._powerUpInterval) {
+                clearInterval(this._powerUpInterval);
+                this._powerUpInterval = null;
+            }
+
+            _.each(this.powerUps, function (pu) {
+                pu.teardown();
+            });
+
+            this.powerUps = [];
+
+        },
+
+        /**
+         * Remove a power up
+         * @param powerUp the view representing the powerup
+         */
+        removePowerUp: function (powerUp) {
+
+            this.powerUps.splice(this.powerUps.indexOf(powerUp), 1);
+            powerUp.teardown();
+
+        },
+
+        /**
+         * Forge a ball
+         *
+         * @param options
+         * @returns {*|Promise}
+         */
         forgeBall: function (options) {
 
             var _options = mixin({
@@ -171,7 +277,9 @@ define(['altair/facades/declare',
 
         },
 
-
+        /**
+         * Keep the background color animating
+         */
         animateBackgroundToNextColor: function () {
 
             var color = this.colors[Math.floor(Math.random() * 3)];
@@ -221,10 +329,16 @@ define(['altair/facades/declare',
         onPlayerDidQuit: function (e) {
 
             var player = e.get('player');
-
             this.removePlayer(player);
+
         },
 
+        /**
+         * Add a player to the booard.
+         *
+         * @param player
+         * @returns {*|Promise}
+         */
         addPlayer: function (player) {
 
             this.players[player.side].unshift(player);
@@ -252,6 +366,9 @@ define(['altair/facades/declare',
 
         },
 
+        /**
+         * Will hide/show instruction views on each column
+         */
         toggleInstructions: function () {
 
             this.leftInstructions.hidden = (this.players.left.length > 0);
@@ -259,7 +376,11 @@ define(['altair/facades/declare',
 
         },
 
-
+        /**
+         * Remove a player from the game (will automatically rebuild the board)
+         *
+         * @param player
+         */
         removePlayer: function (player) {
 
             var players = this.players[player.side] || [];
@@ -274,20 +395,40 @@ define(['altair/facades/declare',
 
         },
 
+        /**
+         * Called everytime a player leaves or enterers
+         */
         rebuildBoard: function () {
 
             this.animatePaddlesIntoPlace();
             this.toggleInstructions();
 
             if (this.players.left.length > 0 && this.players.right.length > 0 && this.balls.length === 0) {
-                setTimeout(this.hitch('dropBall'), 2000);
-            } else if (this.players.left.length === 0 || this.players.right.length === 0 && this.balls.length > 0) {
+                setTimeout(this.hitch('dropBall'), 3000);
+            } else if ((this.players.left.length === 0 || this.players.right.length === 0) && this.balls.length > 0) {
                 _.each(this.balls, this.hitch('teardownBall'));
+            }
+
+            //enable powerups
+            if (this.players.left.length > 0 && this.players.right.length > 0 && !this._powerUpInterval) {
+                this._powerUpInterval = setInterval(this.hitch(function () {
+
+                    if (this.powerUps.length === 0) {
+                        this.dropPowerUp();
+                    }
+
+                }), this.powerUpInterval);
+            }
+            //disable powerups
+            else if (this.balls.length === 0) {
+                this.disablePowerUps();
             }
 
         },
 
-
+        /**
+         * Will animate every paddle to its proper column.
+         */
         animatePaddlesIntoPlace: function () {
 
             _.each(['left', 'right'], function (side) {
@@ -302,6 +443,13 @@ define(['altair/facades/declare',
 
         },
 
+        /**
+         * Pass a player and i'll tell you in which column they should be placed (actually the left of the frame in
+         * pixels);
+         *
+         * @param player
+         * @returns {number}
+         */
         paddleLeft: function (player) {
 
             var left,
@@ -367,6 +515,17 @@ define(['altair/facades/declare',
 
             var player = e.get('player');
             player.score(1);
+
+        },
+
+        onDidHitPowerUp: function (e) {
+
+            var powerUp = e.get('powerUp'),
+                player  = e.get('player');
+
+            console.log('powerup hit by' + player.username);
+
+//            this.removePowerUp(powerUp);
 
         }
 
