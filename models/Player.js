@@ -10,6 +10,7 @@ define(['altair/facades/declare',
         connection: null,
         side:       null,
         username:   '',
+        _score:      0,
         startup: function (options) {
 
             var _options = options || this.options || {};
@@ -20,6 +21,14 @@ define(['altair/facades/declare',
 
             return this.inherited(arguments);
 
+        },
+
+        score: function (points) {
+
+            this._score += points;
+            this.connection.emit('score', {
+                points: points
+            });
         }
 
 
