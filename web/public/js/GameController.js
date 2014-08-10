@@ -6,7 +6,7 @@ pongpi.controller('GameController', function ($scope) {
     $scope.player       = null; //user object
     $scope.username     = '';
     $scope.joined       = false;
-    $scope.colors       = ['#dfd9b5', '#a4897e', '#a4897e', '#00525e', '#1a303b'];
+    $scope.colors       = ['#dfd9b5', '#a4897e', '#ff625d', '#00525e', '#1a303b', '#5a3735'];
 
     altair.sockets.on('score', function (e) {
 
