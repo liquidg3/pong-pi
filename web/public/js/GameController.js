@@ -12,7 +12,7 @@ pongpi.controller('GameController', function ($scope) {
 
     onScroll = function () {
 
-        var max = $('.paddle-scroll').height() - $('.game-board').height(),
+        var max     = $('.paddle-scroll').height() - $('.game-board').height(),
             percent = $('.game-board').scrollTop() / max;
 
 
@@ -57,6 +57,10 @@ pongpi.controller('GameController', function ($scope) {
 
         altair.sockets.emit('join');
         $scope.joined = true;
+
+        var max     = $('.paddle-scroll').height() - $('.game-board').height();
+
+        $('.game-board').scrollTop(max / 2);
 
 
     };
