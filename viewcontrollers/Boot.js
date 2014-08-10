@@ -7,37 +7,53 @@ define(['altair/facades/declare',
         /**
          * Every controller uses an altair/StateMachine for state management
          */
-        states:  ['splash'],
+        states:  ['splash', 'pause'],
         selectedColor: Math.floor(Math.random() * 3),
 
         //use the "WillEnter" to load your resources; views, sounds, etc.
         onStateMachineWillEnterSplash: function (e) {
 
-            //every view controller has a view property that represents its main view
-            //i want it to be one of our colors
-            this.view.backgroundColor = ['#d8cb01', '#00ad3d', '#d8015e'][this.selectedColor];
+            return this.forgeView('Image', {
+                backgroundColor: 'transparent',
+                image: 'assets/images/loading.jpg'
 
-            //this.all allows many async operations to take place at once
-            //i'll use it to forge some stuff
-            return this.all({
-                logo: this.forgeView('Image', {
-                    backgroundColor: 'transparent', //default backgroundColor is #fff
-                    image: 'assets/images/logo.png',
-                    alpha: 0 //i wanna fade this badboy in later
-                })
-            }).otherwise(function (err) {
-                this.log(err);
+            }).then(function (loadingImage) {
+
+                loadingImage.frame.left = this.view.frame.width / 2 - loadingImage.frame.width / 2;
+                loadingImage.frame.top  = this.view.frame.height / 2 - loadingImage.frame.height / 2;
+
+                this.view.addSubView(loadingImage);
+
+            }.bind(this)).then(function () {
+                //this.all allows many async operations to take place at once
+                //i'll use it to forge some stuff
+                return this.all({
+                    logo: this.forgeView('Image', {
+                        backgroundColor: 'transparent', //default backgroundColor is #fff
+                        image: 'assets/images/logo.png',
+                        alpha: 0 //i wanna fade this badboy in later
+                    })
+
+                }).otherwise(function (err) {
+
+                    this.log(err);
+
+                }.bind(this));
+
             }.bind(this));
 
         },
 
         //now everything is ready for the splash state
         onStateMachineDidEnterSplash: function (e) {
+            this.view.removeAllSubViews(); //cleanup view
+
+            //every view controller has a view property that represents its main view
+            //i want it to be one of our colors
+            this.view.backgroundColor = ['#d8cb01', '#00ad3d', '#d8015e'][this.selectedColor];
 
             //this was passed from the last stage
             var logo = e.get('logo');
-
-//            console.log('didEnterSplash', logo);
 
             //i'll center it on screen (my view will default to the canvas size)
             logo.frame.left = this.view.frame.width / 2 - logo.frame.width / 2;
@@ -68,15 +84,21 @@ define(['altair/facades/declare',
 
             return logo.animate('alpha', 0, 500).then(function () {  //fade back out
 
-//                this.view.removeAllSubViews(); //cleanup for next state
-
                 this.app.presentViewController('GameBoard', {
                     startColor: this.selectedColor
                 });
 
             }.bind(this));
 
-        }
+        },
+
+        onStateMachineWillEnterPause: function (e) {},
+
+        onStateMachineDidEnterPause: function (e) {},
+
+        onStateMachineWillUnPause: function (e) {},
+
+        onStateMachineDidUnPauseGame: function (e) {}
 
     });
 

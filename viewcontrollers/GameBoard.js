@@ -56,19 +56,65 @@ define(['altair/facades/declare',
         //use the "WillEnter" to load your resources; views, sounds, etc.
         onStateMachineWillEnterGame: function (e) {
 
+            //game board boundary left
+            this.forgeBlock({
+                frame: {
+                    top: 0,
+                    left: 0,
+                    width: this.view.frame.width,
+                    height: 5,
+                    backgroundColor: '#fff'
+                }
+            }).then(function (block) {
+                this.view.addSubView(block);
+            }.bind(this));
+
+
+            //game board boundary right
+            this.forgeBlock({
+                frame: {
+                    top: this.view.frame.height - 5,
+                    left: 0,
+                    width: this.view.frame.width,
+                    height: 5,
+                    backgroundColor: '#000'
+                }
+            }).then(function (block) {
+                this.view.addSubView(block);
+            }.bind(this));
+
+//@todo: game board boundary top
+//@todo: game board boundary bottom
+
             this.animateBackgroundToNextColor();
 
         },
 
         onStateMachineDidEnterGame: function (e) {
 
-//            var dfd = new this.Deferred();
-//
             this.forgeBall().then(function (ball) {
                 this.view.addSubView(ball);
             }.bind(this));
-//
-//            return dfd;
+
+        },
+
+        forgeBlock: function (options) {
+            var _options = options || _options;
+
+            //@todo: better validation, with some helpful errors here..  sorry, in a rush!
+
+            return this.all({
+                block:     this.forgeView('Block', _options),
+                collision:  this.forgeBehavior('Collision', {
+                    group: this.collisionGroup()
+                })
+            }).then(function (objects) {
+                var block = objects.block;
+                block.addBehavior(objects.collision);
+
+                return block;
+
+            });
 
         },
 
@@ -120,7 +166,6 @@ define(['altair/facades/declare',
                 ball:       this.forgeView('Ball', _options),
                 behavior:   this.forgeBehavior('Ball')
             }).then(function (objects) {
-
                 var ball        = objects.ball,
                     behavior    = objects.behavior;
 

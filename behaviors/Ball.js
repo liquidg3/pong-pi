@@ -9,29 +9,27 @@ define(['altair/facades/declare',
 
         startDirection: -1, //1 === right, -1 === left
         velocity:       null,
-        collusion:      null,
-        startup: function (options) {
+        collision:      null,
 
+        startup: function (options) {
             this.deferred = this.all({
                 velocity:   options.vc.forgeBehavior('Velocity'),
                 collision:  options.vc.forgeBehavior('Collision', {
-                    group:  options.vc.collisionGroup()
+                    group:  options.vc.collisionGroup(),
+                    calculate: true
                 })
             }).then(function (dependencies) {
 
                 declare.safeMixin(this, dependencies);
 
-                //pick a random x/y velocity
-                this.velocity.xSpeed = Math.floor((Math.random() * 8) + 5);
-                this.velocity.ySpeed = Math.floor((Math.random() * 8) + 5);
+                //pick a random direction and speed
+                this.velocity.speed = Math.floor((Math.random() * 8) + 5);
 
-                //if x or y are even, lets reverse them
-                if (this.velocity.xSpeed % 2 === 0) {
-                    this.velocity.xSpeed *= -1;
-                }
+                this.velocity.direction = (Math.random() - 0.5) * 16;
 
-                if (this.velocity.ySpeed % 2 === 0) {
-                    this.velocity.ySpeed *= -1;
+                //randomly decide if we're going to throw the ball left or right
+                if ((Math.random() - 0.5) * 2 > 0) {
+                    this.velocity.direction -= 180;
                 }
 
                 return this;
@@ -45,15 +43,8 @@ define(['altair/facades/declare',
         step:  function (time) {
 
             var view = this.view;
-
-            //our we at the bottom?
-            if (view.frame.top + view.frame.height >= view.vc.view.frame.height) {
-
-                this.velocity.ySpeed *= -1;
-
-            }
             //off to the right
-            else if (view.frame.left + view.frame.width >= view.vc.view.frame.width) {
+            if (view.frame.left + view.frame.width >= view.vc.view.frame.width) {
 
                 this.view.vc.emit('score', {
                     side: 'right',
@@ -72,10 +63,6 @@ define(['altair/facades/declare',
                 });
 
             }
-            //off the top
-            else if (view.frame.top <= 0) {
-                this.velocity.ySpeed *= -1;
-            }
 
             return this.inherited(arguments);
 
@@ -84,8 +71,8 @@ define(['altair/facades/declare',
         onDidCollide: function (e) {
 
             var view = e.get('view');
-            this.velocity.xSpeed *= -1;
 
+            this.velocity.direction = e.get('angleOfReflection') + ((Math.random() - 0.5) * 16);
         },
 
         setView: function (view) {
