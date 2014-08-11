@@ -24,8 +24,7 @@ define(['altair/facades/declare',
                 declare.safeMixin(this, dependencies);
 
                 //pick a random direction and speed
-                this.velocity.speed = Math.floor((Math.random() * 10) + 10);
-
+                this.velocity.speed     = options.vc.ballSpeed;
                 this.velocity.direction = (Math.random() - 0.5) * 16;
 
                 //randomly decide if we're going to throw the ball left or right

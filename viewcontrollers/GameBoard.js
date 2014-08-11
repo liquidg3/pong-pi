@@ -16,6 +16,7 @@ define(['altair/facades/declare',
             [216, 1, 94]
         ],
         balls:                       null,  //all the active balls
+        ballSpeed:                   10,     //how fast do your balls move
         paddleColumnWidth:           200,   //each player fits into a column, this is that columns width (the smaller, the closer each paddle will be)
         paddleWidth:                 10,    //how wide is the paddle?
         paddleHeight:                100,   //how tall is the paddle?
@@ -27,6 +28,7 @@ define(['altair/facades/declare',
         powerUps:                    null,
         powerUpInterval:             10000, //how often will power ups drop into place
         _powerUpInterval:            null,
+        _dropBallTimeout:            null,
 
         //a view controller is a lifecycle object - https://github.com/liquidg3/altair/blob/master/docs/lifecycles.md
         startup:                     function (options) {
@@ -405,8 +407,8 @@ define(['altair/facades/declare',
             this.animatePaddlesIntoPlace();
             this.toggleInstructions();
 
-            if (this.players.left.length > 0 && this.players.right.length > 0 && this.balls.length === 0) {
-                setTimeout(this.hitch('dropBall'), 3000);
+            if (this.players.left.length > 0 && this.players.right.length > 0 && this.balls.length === 0 && !this._dropBallTimeout) {
+                this._dropBallTimeout = setTimeout(this.hitch('dropBall'), 3000);
             } else if ((this.players.left.length === 0 || this.players.right.length === 0) && this.balls.length > 0) {
                 _.each(this.balls, this.hitch('teardownBall'));
             }
@@ -490,6 +492,8 @@ define(['altair/facades/declare',
 
             if (this.players.left.length > 0 && this.players.right.length > 0) {
 
+                this._dropBallTimeout = null;
+
                 //drop another ball in 3 seconds
                 return this.forgeBall().then(function (ball) {
                     this.view.addSubView(ball);
@@ -527,8 +531,8 @@ define(['altair/facades/declare',
             var powerUp = e.get('powerUp'),
                 player  = e.get('player');
 
-            powerUp.apply(this, player);
             this.removePowerUp(powerUp.view);
+            powerUp.apply(this, player);
 
         }
 

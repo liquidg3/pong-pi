@@ -10,10 +10,12 @@ define(['altair/facades/declare',
         apply: function (vc, player) {
 
             player.paddle.frame.height *= 2;
+            player.paddle.animate('frame.height', vc.paddleHeight * 2, 1000);
+
 
             setTimeout(function () {
 
-                player.paddle.frame.height /= 2;
+                player.paddle.animate('frame.height', vc.paddleHeight, 1000);
 
             }, this.duration);
 
