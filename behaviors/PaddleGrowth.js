@@ -6,6 +6,7 @@ define(['altair/facades/declare',
 
     return declare([PowerUp], {
 
+        duration: 10000,
         apply: function (vc, player) {
 
             player.paddle.frame.height *= 2;
@@ -14,7 +15,7 @@ define(['altair/facades/declare',
 
                 player.paddle.frame.height /= 2;
 
-            }, 5000);
+            }, this.duration);
 
         }
 

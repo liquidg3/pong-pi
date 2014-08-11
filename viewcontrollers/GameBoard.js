@@ -267,6 +267,7 @@ define(['altair/facades/declare',
                 var ball        = objects.ball,
                     behavior    = objects.behavior;
 
+                ball.behavior = behavior; //we'll need it elsewhere
                 ball.addBehavior(behavior);
                 this.balls.push(ball);
 
@@ -436,7 +437,9 @@ define(['altair/facades/declare',
 
                 _.each(this.players[side] || [], function (player) {
 
-                    player.paddle.animate('frame.left', this.paddleLeft(player), 1000);
+                    if (player.paddle) {
+                        player.paddle.animate('frame.left', this.paddleLeft(player), 1000);
+                    }
 
                 }, this);
 
@@ -524,6 +527,7 @@ define(['altair/facades/declare',
             var powerUp = e.get('powerUp'),
                 player  = e.get('player');
 
+            powerUp.apply(this, player);
             this.removePowerUp(powerUp.view);
 
         }
