@@ -33,8 +33,6 @@ define(['altair/facades/declare',
                     this.velocity.direction -= 180;
                 }
 
-this.velocity.direction = 0;
-
                 return this;
 
             }.bind(this));
@@ -95,7 +93,8 @@ this.velocity.direction = 0;
                 ballMidpoint,
                 paddleHeight,
                 reflectionMultiplier,
-                reflectionLimiter = 75;
+                reflectionLimiter = 75,
+                reflectionDirection;
 
             _.each(collisions, function (collision) {
 
@@ -117,9 +116,19 @@ this.velocity.direction = 0;
 
                     paddleHeight = view.frame.height;
 
-                    reflectionMultiplier = -(ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
+                    reflectionDirection = this.view.frame.left <= (this.vc.view.frame.width/2) ? 0 : 180;   //if the collision is on the left side, set the reflectionDirection ot 0 (full right), else set it to 180 (full left)  we apply the modifier next
 
-                    this.velocity.direction = e.get('angleOfReflection') + (reflectionLimiter /*how far we can deviate from actual reflection*/ * reflectionMultiplier);
+                    if (this.view.frame.left + (this.view.frame.width/2) <= this.vc.view.frame.width/2) {
+                        reflectionDirection = 0;
+                        reflectionMultiplier = (ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
+
+                    } else {
+                        reflectionDirection = 180;
+                        reflectionMultiplier = -(ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
+
+                    }
+
+                    this.velocity.direction = reflectionDirection + (reflectionLimiter /*how far we can deviate from actual reflection*/ * reflectionMultiplier);
                     this.lastPlayer         = view.player;
 
                     this.vc.emit('paddle-collision', {
