@@ -17,7 +17,7 @@ define(['altair/facades/declare',
 
             return this.forgeView('Image', {
                 backgroundColor: '#000',
-                image: 'assets/images/loading.jpg'
+                image: 'assets/images/loading.png'
             }).then(function (loadingImage) {
 
                 loadingImage.frame.left = this.view.frame.width / 2 - loadingImage.frame.width / 2;
