@@ -40,28 +40,30 @@ define(['altair/facades/declare',
 
         },
 
-        apply: function (player) {
+        apply: function (vc, player) {
 
         },
 
         onDidCollide: function (e) {
 
             var view = e.get('view');
-            console.log('did collide');
-            this.view.removeFromSuperView();
 
-//            if (this.enabled && view.lastPlayer) {
-//
-//                this.enabled = false;
-//
-//                this.view.vc.emit('power-up-collision', {
-//                    ball: view,
-//                    player: view.lastPlayer,
-//                    powerUp: this,
-//                    view: this.view
-//                });
-//
-//            }
+            if (view.ballBehavior && view.ballBehavior.lastPlayer) {
+
+                this.view.vc.emit('power-up-collision', {
+                    ball: view,
+                    player: view.ballBehavior.lastPlayer,
+                    powerUp: this,
+                    view: this.view
+                });
+
+            }
+
+        },
+
+        teardown: function () {
+
+
 
         }
 

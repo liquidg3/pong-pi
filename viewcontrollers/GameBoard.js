@@ -235,8 +235,8 @@ define(['altair/facades/declare',
          */
         removePowerUp: function (powerUp) {
 
-            this.powerUps.splice(this.powerUps.indexOf(powerUp), 1);
             powerUp.teardown();
+            this.powerUps.splice(this.powerUps.indexOf(powerUp), 1);
 
         },
 
@@ -524,9 +524,7 @@ define(['altair/facades/declare',
             var powerUp = e.get('powerUp'),
                 player  = e.get('player');
 
-            console.log('powerup hit by' + player.username);
-
-//            this.removePowerUp(powerUp);
+            this.removePowerUp(powerUp.view);
 
         }
 

@@ -107,7 +107,7 @@ this.velocity.direction = 0;
                     //well, we need to determine which side of the paddle we're on.. top or bottom?
                     paddleMidpoint = {
                         //x: view.frame.left + (view.frame.width / 2) //we dont need x information for this use case
-                        y: view.frame.top + (view.frame.height/2)
+                        y: view.frame.top + (view.frame.height / 2)
                     };
 
                     ballMidpoint = {
@@ -137,6 +137,7 @@ this.velocity.direction = 0;
             view.addBehavior(this.velocity);
             view.addBehavior(this.collision);
 
+            view.ballBehavior = this;
             view.on('collision').then(this.hitch('onDidCollide'));
 
             return this.inherited(arguments);
