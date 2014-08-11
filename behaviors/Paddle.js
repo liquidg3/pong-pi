@@ -26,7 +26,7 @@ define(['altair/facades/declare',
             var lastPosition,
                 thisPosition,
                 newPosition,
-                damper = 2;
+                damper = 3;
 
             if (this._idle) {
                 this.top += this._inertia;
@@ -52,7 +52,8 @@ define(['altair/facades/declare',
                 lastPosition,
                 thisPosition,
                 direction,
-                distance;
+                distance,
+                inertiaThreshold = 30;
 
             this.top =  max - data.distance * max;
 
@@ -77,8 +78,8 @@ define(['altair/facades/declare',
 
                 this._inertia = -distance;
 
-                if(this._inertia > 20) this._inertia = 20;
-                if(this._inertia < -20) this._inertia = -20;
+                if(this._inertia > inertiaThreshold) this._inertia = inertiaThreshold;
+                if(this._inertia < -inertiaThreshold) this._inertia = -inertiaThreshold;
 
                 this._lastDirection = direction;
                 this._idle = false;
