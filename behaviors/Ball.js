@@ -115,16 +115,15 @@ define(['altair/facades/declare',
 
                     paddleHeight = view.frame.height;
 
-                    reflectionDirection = this.view.frame.left <= (this.vc.view.frame.width/2) ? 0 : 180;   //if the collision is on the left side, set the reflectionDirection ot 0 (full right), else set it to 180 (full left)  we apply the modifier next
-
-                    if (this.view.frame.left + (this.view.frame.width/2) <= this.vc.view.frame.width/2) {
-                        reflectionDirection = 0;
-                        reflectionMultiplier = (ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
-
-                    } else {
+                    //determine which direction to bounce the ball upon collision with a paddle.
+                    if (this.view.frame.left < collision.view.frame.left) {
                         reflectionDirection = 180;
                         reflectionMultiplier = -(ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
+                    }
 
+                    if ((this.view.frame.left + this.view.frame.width) > (collision.view.frame.left + collision.view.frame.width)) {
+                        reflectionDirection = 0;
+                        reflectionMultiplier = (ballMidpoint.y - paddleMidpoint.y) / paddleHeight;
                     }
 
                     this.velocity.direction = reflectionDirection + (reflectionLimiter /*how far we can deviate from actual reflection*/ * reflectionMultiplier);

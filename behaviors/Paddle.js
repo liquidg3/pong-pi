@@ -7,6 +7,11 @@ define(['altair/facades/declare',
 
         player: null,
         top:    -999,
+        enableInertia: true,
+        _inertia: 0,
+        _lastDirection: 0,
+        _idle: false,
+
         constructor: function (options) {
 
             this.assert(options && options.player, 'you must pass options and a player');
@@ -16,17 +21,69 @@ define(['altair/facades/declare',
         },
 
         step:  function (time) {
+            this.inherited(arguments);
+
+            var lastPosition,
+                thisPosition,
+                newPosition,
+                damper = 2;
+
+            if (this._idle) {
+                this.top += this._inertia;
+            }
+
+            this._inertia = this._inertia/damper;
+
 
             if (this.top > -999) {
+                if (this.top < 0) this.top = 0;
+                if (this.top+this.view.frame.height > this.vc.view.frame.height) this.top = this.vc.view.frame.height-this.view.frame.height;
+
                 this.view.frame.top = this.top;
             }
 
-            return this.inherited(arguments);
+            this._idle = true;
+            return this;
+
         },
 
         onScroll: function (data) {
-            var max = this.vc.view.frame.height - this.view.frame.height;
+            var max = this.vc.view.frame.height - this.view.frame.height,
+                lastPosition,
+                thisPosition,
+                direction,
+                distance;
+
             this.top =  max - data.distance * max;
+
+            if (this.enableInertia) {
+                lastPosition = {
+                    //x: this.lastFrame.left,
+                    y: this.lastFrame.top
+                };
+
+                thisPosition = {
+                    //x: this.view.frame.left,
+                    y: this.view.frame.top
+                };
+
+                distance = (lastPosition.y - thisPosition.y);
+                direction = distance > 0 ? 1 : -1;
+
+                //without this, when a player tells the paddle to go up, it continues down for a few frames
+                if (this._lastDirection !== direction) {
+                    this._inertia = 0;
+                }
+
+                this._inertia = -distance;
+
+                if(this._inertia > 20) this._inertia = 20;
+                if(this._inertia < -20) this._inertia = -20;
+
+                this._lastDirection = direction;
+                this._idle = false;
+            }
+
         }
 
     });
