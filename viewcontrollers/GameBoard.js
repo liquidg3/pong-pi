@@ -24,6 +24,7 @@ define(['altair/facades/declare',
         ballRadius:                  10,    //starting ball radius
         currentColor:                null,  //background color tracking
         players:                     null,  //players by side
+        playableRect:                null,  //the screen bounds within which all visual game components is confined to taking place within
 
         powerUps:                    null,
         powerUpInterval:             10000, //how often will power ups drop into place
@@ -35,6 +36,13 @@ define(['altair/facades/declare',
 
             return this.inherited(arguments).then(function () {
 
+                this.playableRect = {
+                    top:    this.view.frame.top + 200,
+                    left:   this.view.frame.left,
+                    width:  this.view.frame.width,
+                    height: this.view.frame.height - 200
+                };
+
                 //beginning state
                 this.balls          = [];
                 this.powerUps       = [];
@@ -42,7 +50,6 @@ define(['altair/facades/declare',
                     left: [],
                     right: []
                 };
-
                 //starting colors
                 this.currentColor           = this.colors[options.startColor || 0];
                 this.view.backgroundColor   = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
@@ -189,8 +196,8 @@ define(['altair/facades/declare',
                     image:           image,
                     backgroundColor: 'transparent',
                     frame: {
-                        left: Math.random() * this.view.frame.width / 2 + this.view.frame.width / 4,
-                        top:  Math.random() * this.view.frame.height / 2 + this.view.frame.height / 4
+                        left: Math.random() * this.vc.playableRect.width / 2 + this.vc.playableRect.width / 4,
+                        top:  Math.random() * this.vc.playableRect.height / 2 + this.vc.playableRect.height / 4
                     }
                 })
             }).then(function (objects) {
@@ -400,7 +407,7 @@ define(['altair/facades/declare',
         },
 
         /**
-         * Called everytime a player leaves or enterers
+         * Called every time a player leaves or enters
          */
         rebuildBoard: function () {
 
