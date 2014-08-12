@@ -1,42 +1,33 @@
 define(['altair/facades/declare',
-        'liquidfire/modules/curium/behaviors/_Base',
-        'altair/Lifecycle'
+        'liquidfire/modules/curium/behaviors/_Base'
 ], function (declare,
-             _Base,
-             Lifecycle) {
+             _Base) {
 
-    return declare([_Base, Lifecycle], {
+    return declare([_Base], {
 
         startDirection: -1, //1 === right, -1 === left
         velocity:       null,
         collision:      null,
         lastPlayer:     null,
 
-        startup: function (options) {
-            this.deferred = this.all({
-                velocity:   options.vc.forgeBehavior('Velocity'),
-                collision:  options.vc.forgeBehavior('Collision', {
-                    group:  options.vc.collisionGroup(),
-                    calculate: true
-                })
-            }).then(function (dependencies) {
+        startup: function () {
 
-                declare.safeMixin(this, dependencies);
+            this.velocity   = this.vc.forgeBehavior('Velocity');
+            this.collision  = this.vc.forgeBehavior('Collision', {
+                group:  this.vc.collisionGroup(),
+                calculate: true
+            });
 
-                //pick a random direction and speed
-                this.velocity.speed     = options.vc.ballSpeed;
-                this.velocity.direction = (Math.random() - 0.5) * 16;
+            //pick a random direction and speed
+            this.velocity.speed     = this.vc.ballSpeed;
+            this.velocity.direction = (Math.random() - 0.5) * 16;
 
-                //randomly decide if we're going to throw the ball left or right
-                if ((Math.random() - 0.5) * 2 > 0) {
-                    this.velocity.direction -= 180;
-                }
+            //randomly decide if we're going to throw the ball left or right
+            if ((Math.random() - 0.5) * 2 > 0) {
+                this.velocity.direction -= 180;
+            }
 
-                return this;
-
-            }.bind(this));
-
-            return this.inherited(arguments);
+            return this;
 
         },
 
@@ -61,6 +52,8 @@ define(['altair/facades/declare',
                     ball: this.view
                 });
 
+                this.view.hidden = true;
+
             }
             //off to the left
             else if (view.frame.left <= 0) {
@@ -70,6 +63,8 @@ define(['altair/facades/declare',
                     behavior: this,
                     ball: this.view
                 });
+
+                this.view.hidden = true;
 
             }
             //off the top

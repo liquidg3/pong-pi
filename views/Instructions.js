@@ -9,43 +9,35 @@ define(['altair/facades/declare',
         backgroundColor: 'rgba(0,0,0,0.5)',
         startup: function (options) {
 
-            var _options = options || this.options || {};
+            var _options    = options || this.options || {};
 
-            this.deferred = this.all({
-                top: _options.vc.forgeView('Label', {
-                    text:       'to play, visit',
-                    font:       '25px sansarif',
-                    textColor:  '#fff',
-                    textAlign:  'center',
-                    backgroundColor: 'transparent'
-                }),
-                ip: _options.vc.forgeView('Label', {
-                    text:       'http://' + _options.vc.app.ip,
-                    font:       '40px sansarif',
-                    textColor:  '#fff',
-                    textAlign:  'center',
-                    backgroundColor: 'transparent'
-                }),
+            this.top         = _options.vc.forgeView('Label', {
+                text:       'to play, visit',
+                font:       '25px sansarif',
+                textColor:  '#fff',
+                textAlign:  'center',
+                backgroundColor: 'transparent'
+            });
 
-                bottom: _options.vc.forgeView('Label', {
-                    text:       'on your phone\'s web browser',
-                    font:       '25px sansarif',
-                    textColor:  '#fff',
-                    textAlign:  'center',
-                    backgroundColor: 'transparent'
-                })
-            }).then(function (dependencies) {
+            this.ip  = _options.vc.forgeView('Label', {
+                text:       'http://' + _options.vc.app.ip,
+                font:       '40px sansarif',
+                textColor:  '#fff',
+                textAlign:  'center',
+                backgroundColor: 'transparent'
+            });
 
-                declare.safeMixin(this, dependencies);
+            this.bottom =  _options.vc.forgeView('Label', {
+                text:       'on your phone\'s web browser',
+                font:       '25px sansarif',
+                textColor:  '#fff',
+                textAlign:  'center',
+                backgroundColor: 'transparent'
+            });
 
-                this.addSubView(this.top);
-                this.addSubView(this.ip);
-                this.addSubView(this.bottom);
-
-                return this;
-
-            }.bind(this));
-
+            this.addSubView(this.top);
+            this.addSubView(this.ip);
+            this.addSubView(this.bottom);
 
             return this.inherited(arguments);
         },

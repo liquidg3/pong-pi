@@ -15,31 +15,19 @@ define(['altair/facades/declare',
 
             this.view.backgroundColor = '#000';
 
-            return this.forgeView('Image', {
+            var loadingImage = this.forgeView('Image', {
                 backgroundColor: '#000',
                 image: 'assets/images/loading.png'
-            }).then(function (loadingImage) {
+            });
+
+            return loadingImage.loadImage().then(function () {
 
                 loadingImage.frame.left = this.view.frame.width / 2 - loadingImage.frame.width / 2;
                 loadingImage.frame.top  = this.view.frame.height / 2 - loadingImage.frame.height / 2;
 
                 this.view.addSubView(loadingImage);
 
-            }.bind(this)).then(function () {
-                //this.all allows many async operations to take place at once
-                //i'll use it to forge some stuff
-                return this.all({
-                    logo: this.forgeView('Image', {
-                        backgroundColor: 'transparent', //default backgroundColor is #fff
-                        image: 'assets/images/logo.png',
-                        alpha: 0 //i wanna fade this badboy in later
-                    })
-
-                })
-
-            }.bind(this)).otherwise(function (err) {
-
-                this.log(err);
+                return this.delay(2000);
 
             }.bind(this));
 
@@ -55,17 +43,26 @@ define(['altair/facades/declare',
             this.view.backgroundColor = ['#d8cb01', '#00ad3d', '#d8015e'][this.selectedColor];
 
             //this was passed from the last stage
-            var logo = e.get('logo');
+            var logo = this.forgeView('Image', {
+                backgroundColor: 'transparent', //default backgroundColor is #fff
+                image: 'assets/images/logo.png',
+                alpha: 0 //i wanna fade this badboy in later
+            });
 
-            //i'll center it on screen (my view will default to the canvas size)
-            logo.frame.left = this.view.frame.width / 2 - logo.frame.width / 2;
-            logo.frame.top  = this.view.frame.height / 2 - logo.frame.height / 2;
 
-            //add it to view
-            this.view.addSubView(logo);
+            return logo.loadImage().then(function (img) {
 
-            //delay for 2 seconds so the terminal finishes outputting (outputting text to the terminal slows UI)
-            return this.delay(2000, logo).then(function (logo) {
+                //add it to view
+                this.view.addSubView(logo);
+
+                //i'll center it on screen (my view will default to the canvas size)
+                logo.frame.left = this.view.frame.width / 2 - logo.frame.width / 2;
+                logo.frame.top  = this.view.frame.height / 2 - logo.frame.height / 2;
+
+                //delay for 2 seconds so the terminal finishes outputting (outputting text to the terminal slows UI)
+                return this.delay(2000, logo);
+
+            }.bind(this)).then(function (logo) {
 
                 return logo.animate('alpha', 1, 500); //animating is easy, you can pass any property and the ending value
 
