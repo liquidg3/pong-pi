@@ -18,7 +18,7 @@ define(['altair/facades/declare',
             });
 
             //pick a random direction and speed
-            this.velocity.speed     = options.vc.ballSpeed + Math.ceil((Math.random() - 0.5) * 4);
+            this.velocity.speed     = this.vc.ballSpeed + Math.ceil((Math.random() - 0.5) * 4);
             this.velocity.direction = (Math.random() - 0.5) * 45;
 
             //randomly decide if we're going to throw the ball left or right
@@ -35,7 +35,7 @@ define(['altair/facades/declare',
             var view = this.view;
 
             //our we at the bottom?
-            if (view.frame.top + view.frame.height > this.vc.playableRect.height) {
+            if (view.frame.top + view.frame.height >= this.vc.playableRect.height) {
 
                 view.frame.top = this.vc.playableRect.height - view.frame.height;
 

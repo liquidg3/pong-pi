@@ -7,7 +7,7 @@ define(['altair/facades/declare',
 
         player: null,
         top:    -999,
-        enableInertia: true,
+        enableInertia: false,
         _inertia: 0,
         _lastDirection: 0,
         _idle: false,
@@ -36,11 +36,12 @@ define(['altair/facades/declare',
 
 
             if (this.top > -999) {
+
                 if (this.top < 0) {
                     this.top = 0;
                 }
 
-                if (this.top + this.vc.playableRect.height > this.vc.playableRect.height) {
+                if (this.top + this.view.frame.height > this.vc.playableRect.height) {
                     this.top = this.vc.playableRect.height - this.view.frame.height;
                 }
 
@@ -53,6 +54,8 @@ define(['altair/facades/declare',
         },
 
         onScroll: function (data) {
+
+
             var max = this.vc.playableRect.height - this.view.frame.height,
                 lastPosition,
                 thisPosition,

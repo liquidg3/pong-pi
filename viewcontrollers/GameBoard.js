@@ -37,10 +37,10 @@ define(['altair/facades/declare',
             return this.inherited(arguments).then(function () {
 
                 this.playableRect = {
-                    top:    this.view.frame.top + 200,
+                    top:    this.view.frame.top,
                     left:   this.view.frame.left,
                     width:  this.view.frame.width,
-                    height: this.view.frame.height - 200
+                    height: this.view.frame.height
                 };
 
                 //beginning state
@@ -172,6 +172,7 @@ define(['altair/facades/declare',
             imageView.addBehavior(behavior);
 
             return imageView.loadImage().then(function () {
+                console.log('image view forged', imageView.frame);
                 return imageView;
             });
 
@@ -372,7 +373,6 @@ define(['altair/facades/declare',
 
             if (!(totalPlayers % 2)) {
                 this.totalBalls = Math.max(1, this.totalBalls - 1);
-
             }
 
             this.rebuildBoard();
