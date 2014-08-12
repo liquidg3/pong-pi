@@ -24,7 +24,7 @@ define(['altair/facades/declare',
         ballRadius:                  10,    //starting ball radius
         currentColor:                null,  //background color tracking
         players:                     null,  //players by side
-
+        totalBalls:                  1,     //how many balls can be out at any 1 time?
         powerUps:                    null,
         powerUpInterval:             10000, //how often will power ups drop into place
         _powerUpInterval:            null,
@@ -66,54 +66,27 @@ define(['altair/facades/declare',
 
             this.animateBackgroundToNextColor();
 
-            //pre-load instruction views
-            return this.all({
-                leftInstructions: this.forgeView('Instructions', {
-                    frame: _.clone(this.view.frame)
-                }),
-                rightInstructions: this.forgeView('Instructions', {
-                    frame: _.clone(this.view.frame)
-                })
-            }).then(function (views) {
+            this.leftInstructions = this.forgeView('Instructions', {
+                frame: _.clone(this.view.frame)
+            });
 
-                declare.safeMixin(this, views);
+            this.rightInstructions = this.forgeView('Instructions', {
+                frame: _.clone(this.view.frame)
+            });
 
-                //place views
-                this.leftInstructions.frame.width   = this.rightInstructions.frame.width = this.view.frame.width / 2;
-                this.rightInstructions.frame.left   = this.view.frame.width / 2;
+            //place views
+            this.leftInstructions.frame.width   = this.rightInstructions.frame.width = this.view.frame.width / 2;
+            this.rightInstructions.frame.left   = this.view.frame.width / 2;
 
-                this.view.addSubView(this.leftInstructions);
-                this.view.addSubView(this.rightInstructions);
+            this.view.addSubView(this.leftInstructions);
+            this.view.addSubView(this.rightInstructions);
 
 
-            }.bind(this));
 
         },
 
         onStateMachineDidEnterGame: function (e) {
 
-
-        },
-
-        forgeBlock: function (options) {
-
-            var _options = options || _options;
-
-            //@todo: better validation, with some helpful errors here..  sorry, in a rush!
-
-            return this.all({
-                block:     this.forgeView('Block', _options),
-                collision:  this.forgeBehavior('Collision', {
-                    group: this.collisionGroup()
-                })
-            }).then(function (objects) {
-
-                var block = objects.block;
-                block.addBehavior(objects.collision);
-
-                return block;
-
-            });
 
         },
 
@@ -135,19 +108,14 @@ define(['altair/facades/declare',
             _options.frame.top      = _options.frame.top || this.view.frame.height / 2 - this.paddleHeight / 2;
             _options.frame.height   = _options.frame.height || this.paddleHeight;
 
-            return this.all({
-                paddle:     this.forgeView('Paddle', _options),
-                collision:  this.forgeBehavior('Collision', {
+            var paddle      = this.forgeView('Paddle', _options),
+                collision   = this.forgeBehavior('Collision', {
                     group: this.collisionGroup()
-                })
-            }).then(function (objects) {
+                });
 
-                var paddle = objects.paddle;
-                paddle.addBehavior(objects.collision);
+            paddle.addBehavior(collision);
 
-                return paddle;
-
-            });
+            return paddle;
 
         },
 
@@ -170,6 +138,7 @@ define(['altair/facades/declare',
 
             var rand    = Math.round(Math.random()),
                 image   = '',
+                imageView,
                 behavior;
 
             switch (rand) {
@@ -183,21 +152,20 @@ define(['altair/facades/declare',
                 break;
             }
 
-            return this.all({
-                behavior: this.forgeBehavior(behavior),
-                view: this.forgeView('Image', {
-                    image:           image,
-                    backgroundColor: 'transparent',
-                    frame: {
-                        left: Math.random() * this.view.frame.width / 2 + this.view.frame.width / 4,
-                        top:  Math.random() * this.view.frame.height / 2 + this.view.frame.height / 4
-                    }
-                })
-            }).then(function (objects) {
+            behavior = this.forgeBehavior(behavior);
+            imageView = this.forgeView('Image', {
+                image:           image,
+                backgroundColor: 'transparent',
+                frame: {
+                    left: Math.random() * this.view.frame.width / 2 + this.view.frame.width / 4,
+                    top:  Math.random() * this.view.frame.height / 2 + this.view.frame.height / 4
+                }
+            });
 
-                objects.view.addBehavior(objects.behavior);
-                return objects.view;
+            imageView.addBehavior(behavior);
 
+            return imageView.loadImage().then(function () {
+                return imageView;
             });
 
         },
@@ -208,11 +176,10 @@ define(['altair/facades/declare',
         dropPowerUp: function () {
 
             this.forgePowerUp().then(function (powerUp) {
-
                 this.powerUps.push(powerUp);
                 this.view.addSubView(powerUp);
-
             }.bind(this));
+
 
         },
 
@@ -254,29 +221,23 @@ define(['altair/facades/declare',
                 backgroundColor: '#fff',
                 frame:           {
                 }
-            }, options || {});
+            }, options || {}),
+                ball,
+                behavior;
 
             _options.frame.width    = this.ballRadius;
             _options.frame.height   = this.ballRadius;
             _options.frame.left     = this.view.frame.width / 2 - this.ballRadius / 2;
             _options.frame.top      = this.view.frame.height / 2 - this.ballRadius / 2;
 
-            return this.all({
-                ball:       this.forgeView('Ball', _options),
-                behavior:   this.forgeBehavior('Ball')
-            }).then(function (objects) {
+            ball        = this.forgeView('Ball', _options);
+            behavior    = this.forgeBehavior('Ball');
 
-                var ball        = objects.ball,
-                    behavior    = objects.behavior;
+            ball.behavior = behavior; //we'll need it elsewhere
+            ball.addBehavior(behavior);
+            this.balls.push(ball);
 
-                ball.behavior = behavior; //we'll need it elsewhere
-                ball.addBehavior(behavior);
-                this.balls.push(ball);
-
-                return ball;
-
-            }.bind(this));
-
+            return ball;
 
         },
 
@@ -322,10 +283,7 @@ define(['altair/facades/declare',
 
             var player = e.get('player');
 
-            this.addPlayer(player).otherwise(function (err) {
-                this.log('error adding player');
-                this.log(err);
-            }.bind(this));
+            this.addPlayer(player);
 
         },
 
@@ -344,30 +302,37 @@ define(['altair/facades/declare',
          */
         addPlayer: function (player) {
 
-            this.players[player.side].unshift(player);
-
-            return this.all({
-                behavior: this.forgeBehavior('Paddle', {
-                    player: player
-                }),
-                paddle: this.forgePaddle({
+            var behavior = this.forgeBehavior('Paddle', {
+                player: player
+            }),
+                paddle = this.forgePaddle({
                     backgroundColor: player.paddleColor,
                     frame: {
                         left: player.side === 'left' ? -this.paddleWidth : this.view.frame.width
                     }
-                })
-            }).then(function (objects) {
+                }),
+                totalPlayers = this.totalPlayers();
 
-                player.paddle = objects.paddle;
-                objects.paddle.player = player;
-                player.paddle.addBehavior(objects.behavior);
+            this.players[player.side].unshift(player);
 
-                this.view.addSubView(objects.paddle);
+            player.paddle = paddle;
+            paddle.player = player;
+            paddle.addBehavior(behavior);
 
-                this.rebuildBoard();
+            this.view.addSubView(paddle);
 
-            }.bind(this));
+            if (totalPlayers > 2 && totalPlayers % 2) {
+                this.totalBalls += 1;
+            }
 
+            this.rebuildBoard();
+
+            return player;
+
+        },
+
+        totalPlayers: function () {
+            return this.players.left.length + this.players.right.length;
         },
 
         /**
@@ -387,7 +352,8 @@ define(['altair/facades/declare',
          */
         removePlayer: function (player) {
 
-            var players = this.players[player.side] || [];
+            var players = this.players[player.side] || [],
+                totalPlayers;
 
             players.splice(players.indexOf(player), 1);
 
@@ -395,26 +361,38 @@ define(['altair/facades/declare',
                 player.paddle.teardown();
             }
 
+            totalPlayers = this.totalPlayers();
+
+            if (!(totalPlayers % 2)) {
+                this.totalBalls = Math.max(1, this.totalBalls - 1);
+
+            }
+
             this.rebuildBoard();
 
         },
 
         /**
-         * Called everytime a player leaves or enterers
+         * Called every time a player leaves or enters
          */
         rebuildBoard: function () {
 
             this.animatePaddlesIntoPlace();
             this.toggleInstructions();
 
-            if (this.players.left.length > 0 && this.players.right.length > 0 && this.balls.length === 0 && !this._dropBallTimeout) {
-                this._dropBallTimeout = setTimeout(this.hitch('dropBall'), 3000);
+            if (this.players.left.length > 0 && this.players.right.length > 0 && !this._dropBallTimeout) {
+
+                this._dropBallTimeout = setTimeout(this.hitch('dropBalls'), 3000);
+
             } else if ((this.players.left.length === 0 || this.players.right.length === 0) && this.balls.length > 0) {
+
                 _.each(this.balls, this.hitch('teardownBall'));
+
             }
 
             //enable powerups
             if (this.players.left.length > 0 && this.players.right.length > 0 && !this._powerUpInterval) {
+
                 this._powerUpInterval = setInterval(this.hitch(function () {
 
                     if (this.powerUps.length === 0) {
@@ -422,6 +400,7 @@ define(['altair/facades/declare',
                     }
 
                 }), this.powerUpInterval);
+
             }
             //disable powerups
             else if (this.balls.length === 0) {
@@ -488,16 +467,22 @@ define(['altair/facades/declare',
 
         },
 
-        dropBall: function () {
+        dropBalls: function () {
 
             if (this.players.left.length > 0 && this.players.right.length > 0) {
 
-                this._dropBallTimeout = null;
+                var c = this.balls.length,
+                    ball,
+                    max = this.totalBalls;
 
-                //drop another ball in 3 seconds
-                return this.forgeBall().then(function (ball) {
+                for (c; c < max; c = c + 1) {
+
+                    ball = this.forgeBall();
                     this.view.addSubView(ball);
-                }.bind(this));
+
+                }
+
+                this._dropBallTimeout = null;
 
             }
 
@@ -509,11 +494,11 @@ define(['altair/facades/declare',
 
             this.teardownBall(ball);
 
-            setTimeout(this.hitch('dropBall'), 2000);
+            setTimeout(this.hitch('dropBalls'), 2000);
 
             //give a point to all players on the side that scored
             _.each(this.players[e.get('side')], function (player) {
-                player.score(1);
+                player.score(5);
             });
 
 
