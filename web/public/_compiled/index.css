@@ -2,10 +2,13 @@ body,
 html {
   width: 100%;
   height: 100%;
-  background-color: #d8015e;
+  background-color: #1c2024;
   font-family: 'Lato', sans-serif;
   font-weight: 200;
-  color: #fff;
+  color: #f4f8fb;
+}
+body {
+  background: url('../images/loading.png') center center no-repeat;
 }
 .side-select-column {
   position: absolute;
@@ -26,12 +29,19 @@ html {
   font-size: 30px;
   font-weight: bold;
 }
-.side-select-column.left-team {
-  background-color: #d8cb01;
+.side-select-column.left-team .icon {
+  background: url('../images/arrow.svg') no-repeat center center #606dd3;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  /* IE 9 */
+  -webkit-transform: rotate(180deg);
+  /* Opera, Chrome, and Safari */
 }
 .side-select-column.right-team {
   left: 50%;
-  background-color: #00ad3d;
+}
+.side-select-column.right-team .icon {
+  background: url('../images/arrow.svg') no-repeat center center #d26a5d;
 }
 h1.select-team {
   text-align: center;
