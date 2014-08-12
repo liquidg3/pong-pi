@@ -1,13 +1,26 @@
-@rightTeam: #00ad3d;
-@leftTeam: #d8cb01;
+@rightTeam: #d26a5d;
+@leftTeam: #606dd3;
+@playerSelectBackground: #2d3e50;
 
 body, html {
     width: 100%;
     height: 100%;
-    background-color: #d8015e;
+    background-color: #1c2024;
     font-family: 'Lato', sans-serif;
     font-weight: 200;
-    color: #fff;
+    color: #f4f8fb;
+}
+
+body {
+    background: url('../images/man-bg-big.png') center center no-repeat;
+}
+
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+    body {
+        background: url('../images/man-bg.png') center bottom no-repeat;
+    }
 }
 
 html.joined, html.joined body {
@@ -24,49 +37,98 @@ html.joined, html.joined body {
 
     .icon {
         background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 20px;
         text-align: center;
-
-        top: 45%;
+        top: 40%;
         position: absolute;
-        left: 15%;
-        right: 15%;
-        padding: 40px 0;
+        left: 45%;
+        right: 45%;
+        padding: 50px 0;
         font-size: 30px;
         font-weight: bold;
     }
+    &.left-team {
+        .icon {
+            left: 0;
+            background: url('../images/arrow.svg') no-repeat center center @leftTeam;
+            transform:rotate(180deg);
+            -ms-transform:rotate(180deg); /* IE 9 */
+            -webkit-transform:rotate(180deg); /* Opera, Chrome, and Safari */
+        }
+    }
+    &.right-team {
+        left: 50%;
+        .icon {
+            right: 0;
+            background: url('../images/arrow.svg') no-repeat center center @rightTeam;
+
+        }
+    }
 
 }
 
-.side-select-column.left-team {
-    background-color: @leftTeam;
-}
-
-.side-select-column.right-team {
-    left: 50%;
-    background-color: @rightTeam;
-}
-
-h1.select-team {
+h1 {
     text-align: center;
-    font-size: 50px;
+    font-size: 25px;
     font-weight: 300;
-    top: 20px;
+    top: 0px;
     position: relative;
+    padding: 25px;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .username-wrapper {
-
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-    top: 50px;
-    left: 50px;
-    right: 50px;
+    background-color: rgba(0, 0, 0, 0.6);
+    top: 35%;
+    padding: 25px 0;
+    left: 0px;
+    right: 0px;
+    text-align: center;
+}
 
-    input {
-        width: 100%;
-    }
+input {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    height: 40px;
+    box-shadow: none;
+    padding: 0 15px 0;
+    font-size: 14px;
+}
+select {
+    margin-top: 10px;
+}
 
+input:hover, input:focus {
+    opacity: 1;
+    border-bottom: 1px solid (@playerSelectBackground * 2);
+    outline: 0;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    -moz-box-shadow: none;
+}
+button,
+button:hover {
+    cursor: pointer;
+    background: transparent;
+    padding: 15px;
+    margin-left: 25px;
+    text-transform: uppercase;
+    background-image:none;
+    box-shadow: none;
+    font-weight: 400;
+    border:1px solid (@playerSelectBackground * 2);
+    color: (@playerSelectBackground * 2);
+}
+
+button:hover {
+    background-color:(@playerSelectBackground * 2);
+    color: #fff;
 }
 
 body.in-game {
@@ -78,7 +140,8 @@ body.in-game {
     overflow-y: scroll;
 
     .paddle-scroll {
-        background-image: url('../images/congruent_outline.png');
+        background: url('../images/vertical-drag.svg') no-repeat center center fixed,
+                    url('../images/congruent_outline.png');
         width: 100%;
         height: 150%;
     }
@@ -86,9 +149,11 @@ body.in-game {
 }
 
 .score {
-    font-size: 200px;
+    font-size: 50px;
     text-align: center;
-    padding-top:200px;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
 }
 
 .colors {
@@ -99,8 +164,65 @@ body.in-game {
     right: 0px;
 
     .block {
+        cursor: pointer;
         width: 50%;
         height: 33.3%;
         float: left;
     }
+}
+
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+
+@-webkit-keyframes fade-out {
+    0% {
+        display: block;
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+        visibility: hidden;
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        display: block;
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+        visibility: hidden;
+    }
+}
+
+.fade-out {
+    -webkit-animation-duration: 3s;
+    animation-duration: 3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-name: fade-out;
+    animation-name: fade-out;
+}
+
+.scroll-instruction {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
 }
