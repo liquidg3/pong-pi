@@ -1,9 +1,11 @@
 <div data-ng-if="side && !player">
 
+    <h1>
+        Enter Your Username
+    </h1>
     <form class="username-wrapper" data-ng-submit="enterUsername(username)">
 
-        <label>enter your username</label>
-        <input type="text" data-ng-model="username"/>
+        <input type="text" data-ng-model="username" placeholder="Username"/>
         <button type="button" data-ng-click="enterUsername(username)">Join</button>
 
     </form>
@@ -11,14 +13,16 @@
 </div>
 
 <div class="colors" data-ng-if="side && player && !player.color">
-
+    <h1>
+        Choose Your Color
+    </h1>
     <div class="block" data-ng-repeat="color in colors track by $index" style="background-color: {{color}}" data-ng-click="selectColor(color)"></div>
 
 </div>
 
 <div data-ng-if="joined" id="game-board" onscroll="onScroll()" class="game-board">
 
-
+    <h1 class="scroll-instruction fade-out">Scroll To Move Paddle</h1>
     <div class="paddle-scroll">
         <div class="score" style="color: {{player.color}}">{{player.score}}</div>
 
