@@ -21,10 +21,10 @@
 </div>
 
 <div data-ng-if="joined" id="game-board" onscroll="onScroll()" class="game-board">
-
     <h1 class="scroll-instruction fade-out">Scroll To Move Paddle</h1>
+    <div class="player-color-overlay" style="background: {{player.color}}"></div>
     <div class="paddle-scroll">
-        <div class="score" style="color: {{player.color}}">{{player.score}}</div>
+        <div class="score">{{player.score}}</div>
 
     </div>
 

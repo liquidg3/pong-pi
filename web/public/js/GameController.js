@@ -8,12 +8,12 @@ pongpi.controller('GameController', function ($scope) {
     $scope.joined       = false;
     $scope.colors       = ['#dfd9b5', '#a4897e', '#ff625d', '#00525e', '#1a303b', '#5a3735'];
 
-    altair.sockets.on('score', function (e) {
-
-        $scope.player.score += e.get('points');
-        $scope.$apply();
-
-    });
+//    altair.sockets.on('score', function (e) {
+//
+//        $scope.player.score += e.get('points');
+//        $scope.$apply();
+//
+//    });
 
 
     onScroll = function () {
@@ -24,9 +24,9 @@ pongpi.controller('GameController', function ($scope) {
 
         if ($scope.joined && max > 0) {
 
-            altair.sockets.emit('scroll', {
-                distance: percent
-            });
+//            altair.sockets.emit('scroll', {
+//                distance: percent
+//            });
         }
 
     };
@@ -36,17 +36,17 @@ pongpi.controller('GameController', function ($scope) {
         //pick a side
         $scope.side = side;
 
-        altair.sockets.emit('picked-side', {
-            side: side
-        });
+//        altair.sockets.emit('picked-side', {
+//            side: side
+//        });
 
     };
 
     $scope.enterUsername = function (username) {
 
-        altair.sockets.emit('enter-username', {
-            username: username
-        });
+//        altair.sockets.emit('enter-username', {
+//            username: username
+//        });
 
         $scope.player = {
             username: username,
@@ -55,24 +55,22 @@ pongpi.controller('GameController', function ($scope) {
             color: false
         };
 
-        alert('pick a color');
-
     };
 
     $scope.selectColor = function (color) {
 
         $scope.player.color = color;
 
-        altair.sockets.emit('color', {
-            color: color
-        });
+//        altair.sockets.emit('color', {
+//            color: color
+//        });
 
         this.join();
     };
 
     $scope.join = function () {
 
-        altair.sockets.emit('join');
+//        altair.sockets.emit('join');
         $scope.joined = true;
 
         var max     = $('.paddle-scroll').height() - $('.game-board').height();
