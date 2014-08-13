@@ -11,6 +11,7 @@ define(['altair/facades/declare',
         _inertia: 0,
         _lastDirection: 0,
         _idle: false,
+        opposite: false, //are controls switched
 
         constructor: function (options) {
 
@@ -55,7 +56,6 @@ define(['altair/facades/declare',
 
         onScroll: function (data) {
 
-
             var max = this.vc.playableRect.height - this.view.frame.height,
                 lastPosition,
                 thisPosition,
@@ -63,7 +63,16 @@ define(['altair/facades/declare',
                 distance,
                 inertiaThreshold = 30;
 
-            this.top =  max - data.distance * max;
+            //power ups can "opposite" us
+            if (this.opposite) {
+
+                this.top = this.vc.playableRect.top + (data.distance * max);
+
+            } else {
+
+                this.top =  max - data.distance * max;
+
+            }
 
             if (this.enableInertia) {
 

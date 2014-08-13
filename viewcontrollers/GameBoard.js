@@ -25,7 +25,7 @@ define(['altair/facades/declare',
         currentColor:                null,  //background color tracking
         players:                     null,  //players by side
         playableRect:                null,  //the screen bounds within which all visual game components is confined to taking place within
-        totalBalls:                  1,     //how many balls can be out at any 1 time?
+        totalBalls:                  2,     //how many balls can be out at any 1 time?
         powerUps:                    null,
         powerUpInterval:             10000, //how often will power ups drop into place
         _powerUpInterval:            null,
@@ -116,7 +116,7 @@ define(['altair/facades/declare',
             _options.frame.height   = _options.frame.height || this.paddleHeight;
 
             var paddle      = this.forgeView('Paddle', _options),
-                collision   = this.forgeBehavior('Collision', {
+                collision   = this.forgeBehavior('Collision2', {
                     group: this.collisionGroup()
                 });
 
@@ -143,19 +143,23 @@ define(['altair/facades/declare',
          */
         forgePowerUp: function () {
 
-            var rand    = Math.round(Math.random()),
+            var rand    = Math.round(Math.random() * 2),
                 image   = '',
                 imageView,
                 behavior;
 
             switch (rand) {
             case 0:
-                image       = 'assets/images/lightning.png';
+                image       = 'assets/images/star.png';
                 behavior    = 'FastBall';
                 break;
             case 1:
                 image       = 'assets/images/scale.png';
                 behavior    = 'PaddleGrowth';
+                break;
+            case 2:
+                image       = 'assets/images/switch.png';
+                behavior    = 'ScrollSwitch';
                 break;
             }
 
@@ -183,10 +187,15 @@ define(['altair/facades/declare',
          */
         dropPowerUp: function () {
 
+            if (this.powerUps.length > 2) {
+                return;
+            }
+
             this.forgePowerUp().then(function (powerUp) {
                 this.powerUps.push(powerUp);
                 this.view.addSubView(powerUp);
             }.bind(this));
+
 
 
         },
@@ -323,8 +332,10 @@ define(['altair/facades/declare',
 
             this.players[player.side].unshift(player);
 
-            player.paddle = paddle;
-            paddle.player = player;
+            player.paddle   = paddle;
+            paddle.player   = player;
+            paddle.behavior = behavior;
+
             paddle.addBehavior(behavior);
 
             this.view.addSubView(paddle);
@@ -402,9 +413,7 @@ define(['altair/facades/declare',
 
                 this._powerUpInterval = setInterval(this.hitch(function () {
 
-                    if (this.powerUps.length === 0) {
-                        this.dropPowerUp();
-                    }
+                    this.dropPowerUp();
 
                 }), this.powerUpInterval);
 

@@ -13,7 +13,7 @@ define(['altair/facades/declare',
 
             this.top         = _options.vc.forgeView('Label', {
                 text:       'to play, visit',
-                font:       '10px sansarif',
+                font:       '15px sansarif',
                 textColor:  '#fff',
                 textAlign:  'center',
                 backgroundColor: 'transparent'
@@ -21,7 +21,7 @@ define(['altair/facades/declare',
 
             this.ip  = _options.vc.forgeView('Label', {
                 text:       'http://' + _options.vc.app.ip,
-                font:       '15px sansarif',
+                font:       '25px sansarif',
                 textColor:  '#fff',
                 textAlign:  'center',
                 backgroundColor: 'transparent'
@@ -29,7 +29,7 @@ define(['altair/facades/declare',
 
             this.bottom =  _options.vc.forgeView('Label', {
                 text:       'on your phone\'s web browser',
-                font:       '10px sansarif',
+                font:       '15px sansarif',
                 textColor:  '#fff',
                 textAlign:  'center',
                 backgroundColor: 'transparent'
@@ -50,9 +50,9 @@ define(['altair/facades/declare',
             //top label
             this.top.frame = {
                 left:   0,
-                top:    this.frame.height * 0.30,
+                top:    this.frame.height * 0.35,
                 width:  frame.width,
-                height: 20
+                height: 30
             };
 
             //our ip

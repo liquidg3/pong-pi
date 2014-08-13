@@ -12,9 +12,10 @@ define(['altair/facades/declare',
         startup: function () {
 
             this.velocity   = this.vc.forgeBehavior('Velocity');
-            this.collision  = this.vc.forgeBehavior('Collision', {
-                group:  this.vc.collisionGroup(),
-                calculate: true
+            this.collision  = this.vc.forgeBehavior('Collision2', {
+                group:          this.vc.collisionGroup(),
+                calculate:      true,
+                debug:          true
             });
 
             //pick a random direction and speed
@@ -100,6 +101,7 @@ define(['altair/facades/declare',
                 var view = collision.view;
 
                 if (view.isPaddle) {
+
                     this.view.frame.top = this.lastFrame.top;//collision.point.y;
                     this.view.frame.left = this.lastFrame.left;//collision.point.x;
 

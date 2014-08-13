@@ -1,13 +1,14 @@
 define(['altair/facades/declare',
-        './PowerUp'
+        './PowerUp',
+        'lodash'
 ], function (declare,
-             PowerUp) {
+             PowerUp,
+             _) {
 
 
     return declare([PowerUp], {
 
-
-        duration: 5000,
+        duration: 7000,
         apply: function (vc, player) {
 
             _.each(vc.balls, function (ball) {

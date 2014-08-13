@@ -15,7 +15,7 @@ define(['altair/facades/declare',
             var _options = options || this.options || {};
 
             this.deferred = this.all({
-                collision: _options.vc.forgeBehavior('Collision', {
+                collision: _options.vc.forgeBehavior('Collision2', {
                     group: _options.vc.collisionGroup()
                 })
             }).then(function (dependencies) {
@@ -28,6 +28,7 @@ define(['altair/facades/declare',
 
 
             return this.inherited(arguments);
+
         },
 
         setView: function (view) {
@@ -45,9 +46,13 @@ define(['altair/facades/declare',
         },
 
         onDidCollide: function (e) {
+
             var view = e.get('view');
 
+            console.log('power up collision');
+
             if (view.ballBehavior && view.ballBehavior.lastPlayer) {
+
                 this.view.vc.emit('power-up-collision', {
                     ball: view,
                     player: view.ballBehavior.lastPlayer,
