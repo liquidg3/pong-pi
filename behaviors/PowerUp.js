@@ -45,11 +45,9 @@ define(['altair/facades/declare',
         },
 
         onDidCollide: function (e) {
-
             var view = e.get('view');
 
             if (view.ballBehavior && view.ballBehavior.lastPlayer) {
-
                 this.view.vc.emit('power-up-collision', {
                     ball: view,
                     player: view.ballBehavior.lastPlayer,

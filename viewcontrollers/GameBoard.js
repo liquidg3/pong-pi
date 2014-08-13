@@ -172,7 +172,7 @@ define(['altair/facades/declare',
             imageView.addBehavior(behavior);
 
             return imageView.loadImage().then(function () {
-                console.log('image view forged', imageView.frame);
+                //console.log('image view forged', imageView.frame);
                 return imageView;
             });
 

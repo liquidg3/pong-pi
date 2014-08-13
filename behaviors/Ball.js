@@ -25,7 +25,7 @@ define(['altair/facades/declare',
             if ((Math.random() - 0.5) * 2 > 0) {
                 this.velocity.direction -= 180;
             }
-
+            
             return this;
 
         },
@@ -89,12 +89,21 @@ define(['altair/facades/declare',
                 reflectionLimiter = 75,
                 reflectionDirection;
 
-            _.each(collisions, function (collision) {
+//console.log('Ball.onDidCollide collisions -----------');
 
+            //_.each(collisions, function (collision) {
+//console.log(collision.view);
+//console.log('--------------');
+//console.log(' ');
+//console.log(' ');
+                var collision = collisions[0];
                 var view = collision.view;
 
                 if (view.isPaddle) {
+                    this.view.frame.top = this.lastFrame.top;//collision.point.y;
+                    this.view.frame.left = this.lastFrame.left;//collision.point.x;
 
+//console.log('ball to paddle collision');
                     //we're colliding with a paddle, now what?
                     //well, we need to determine which side of the paddle we're on.. top or bottom?
                     paddleMidpoint = {
@@ -130,7 +139,7 @@ define(['altair/facades/declare',
 
                 }
 
-            }, this);
+            //}, this);
         },
 
         setView: function (view) {
