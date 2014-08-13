@@ -17,13 +17,14 @@ define(['altair/facades/declare',
         ],
         balls:                       null,  //all the active balls
         ballSpeed:                   10,     //how fast do your balls move
-        paddleColumnWidth:           200,   //each player fits into a column, this is that columns width (the smaller, the closer each paddle will be)
-        paddleWidth:                 10,    //how wide is the paddle?
-        paddleHeight:                100,   //how tall is the paddle?
-        sidePadding:                 100,   //how far in from the side will each paddle start
-        ballRadius:                  10,    //starting ball radius
+        paddleColumnWidth:           30,   //each player fits into a column, this is that columns width (the smaller, the closer each paddle will be)
+        paddleWidth:                 5,    //how wide is the paddle?
+        paddleHeight:                60,   //how tall is the paddle?
+        sidePadding:                 50,   //how far in from the side will each paddle start
+        ballRadius:                  5,    //starting ball radius
         currentColor:                null,  //background color tracking
         players:                     null,  //players by side
+        playableRect:                null,  //the screen bounds within which all visual game components is confined to taking place within
         totalBalls:                  1,     //how many balls can be out at any 1 time?
         powerUps:                    null,
         powerUpInterval:             10000, //how often will power ups drop into place
@@ -35,6 +36,13 @@ define(['altair/facades/declare',
 
             return this.inherited(arguments).then(function () {
 
+                this.playableRect = {
+                    top:    this.view.frame.top,
+                    left:   this.view.frame.left,
+                    width:  this.view.frame.width,
+                    height: this.view.frame.height
+                };
+
                 //beginning state
                 this.balls          = [];
                 this.powerUps       = [];
@@ -42,7 +50,6 @@ define(['altair/facades/declare',
                     left: [],
                     right: []
                 };
-
                 //starting colors
                 this.currentColor           = this.colors[options.startColor || 0];
                 this.view.backgroundColor   = 'rgba(' + this.currentColor.r + ', ' + this.currentColor.g + ', ' + this.currentColor.b + ', 1)';
@@ -165,6 +172,7 @@ define(['altair/facades/declare',
             imageView.addBehavior(behavior);
 
             return imageView.loadImage().then(function () {
+                console.log('image view forged', imageView.frame);
                 return imageView;
             });
 
@@ -365,7 +373,6 @@ define(['altair/facades/declare',
 
             if (!(totalPlayers % 2)) {
                 this.totalBalls = Math.max(1, this.totalBalls - 1);
-
             }
 
             this.rebuildBoard();

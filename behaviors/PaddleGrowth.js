@@ -13,7 +13,9 @@ define(['altair/facades/declare',
 
             setTimeout(function () {
 
-                player.paddle.animate('frame.height', vc.paddleHeight, 1000);
+                if (player.paddle.superView) {
+                    player.paddle.animate('frame.height', vc.paddleHeight, 1000);
+                }
 
             }, this.duration);
 

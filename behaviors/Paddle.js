@@ -36,8 +36,14 @@ define(['altair/facades/declare',
 
 
             if (this.top > -999) {
-                if (this.top < 0) this.top = 0;
-                if (this.top+this.view.frame.height > this.vc.view.frame.height) this.top = this.vc.view.frame.height-this.view.frame.height;
+
+                if (this.top < 0) {
+                    this.top = 0;
+                }
+
+                if (this.top + this.view.frame.height > this.vc.playableRect.height) {
+                    this.top = this.vc.playableRect.height - this.view.frame.height;
+                }
 
                 this.view.frame.top = this.top;
             }
@@ -48,7 +54,9 @@ define(['altair/facades/declare',
         },
 
         onScroll: function (data) {
-            var max = this.vc.view.frame.height - this.view.frame.height,
+
+
+            var max = this.vc.playableRect.height - this.view.frame.height,
                 lastPosition,
                 thisPosition,
                 direction,
@@ -78,11 +86,17 @@ define(['altair/facades/declare',
 
                 this._inertia = -distance;
 
-                if(this._inertia > inertiaThreshold) this._inertia = inertiaThreshold;
-                if(this._inertia < -inertiaThreshold) this._inertia = -inertiaThreshold;
+                if (this._inertia > inertiaThreshold) {
+                    this._inertia = inertiaThreshold;
+                }
+
+                if (this._inertia < -inertiaThreshold) {
+                    this._inertia = -inertiaThreshold;
+                }
 
                 this._lastDirection = direction;
                 this._idle = false;
+
             }
 
         }

@@ -226,10 +226,8 @@ define(['altair/facades/declare',
          */
         attachMediaForPropertyTypes: function (media) {
 
-
             var apollo = this.nexus('cartridges/Apollo'),
                 types = apollo.propertyTypes();
-
 
             _.each(types, function (type) {
 
@@ -336,7 +334,7 @@ define(['altair/facades/declare',
          */
         importMedia: function (from) {
 
-            this.log('importing media from', from);
+            this.log('importing media from %s', from);
 
             var to = this._dir,
                 qParts = from.split('?'), //incase we have a query string

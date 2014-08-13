@@ -21,6 +21,7 @@ pongpi.controller('GameController', function ($scope) {
         var max     = $('.paddle-scroll').height() - $('.game-board').height(),
             percent = $('.game-board').scrollTop() / max;
 
+        console.log('max', max, percent);
 
         if ($scope.joined && max > 0) {
 

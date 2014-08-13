@@ -33,8 +33,6 @@ define(['altair/facades/declare',
             }
 
             this.ip = ip;
-
-//
             this.nexus('liquidfire:Sockets').startupSocket('socketio', {
                 port: 6789,
                 host: 'http://' + ip
@@ -52,16 +50,13 @@ define(['altair/facades/declare',
 
         onDidConnect: function (e) {
 
-            var connection = e.get('connection');
+            var connection = e.get('connection'),
+                player     = this.forgeSync('models/Player', {
+                    connection: connection
+                });
 
-            this.forge('models/Player', {
-                connection: connection
-            }).then(function (player) {
-
-                this.players.push(player);
-                connection.player = player;
-
-            }.bind(this));
+            this.players.push(player);
+            connection.player = player;
 
             connection.on('picked-side', this.hitch('onDidPickSide', connection));
             connection.on('disconnect', this.hitch('onDidDisconnect', connection));

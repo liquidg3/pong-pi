@@ -39,33 +39,33 @@ define(['altair/facades/declare',
             //let normal startup run, then create server
             return this.inherited(arguments).then(function () {
 
-                this.log('setting up socket.io ' + this.get('mode') + ' @ ' + this.url());
+                    this.log('setting up socket.io ' + this.get('mode') + ' @ ' + this.url());
 
-                //our js with path host settings, etc.
-                this._js = ['//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', '/public/_sockets/js/Sockets.js', '/public/_sockets/js/Socket.io.js?url=' + this.url()];
+                    //our js with path host settings, etc.
+                    this._js = ['//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', '/public/_sockets/js/Sockets.js', '/public/_sockets/js/Socket.io.js?url=' + this.url()];
 
-                //if we are in server modes
-                if (['server', 'relay'].indexOf(this.get('mode')) > -1) {
-                    this.setupServer();
-                }
+                    //if we are in server modes
+                    if (['server', 'relay'].indexOf(this.get('mode')) > -1) {
+                        this.setupServer();
+                    }
 
-                //connect to our server
-                if (['client', 'relay'].indexOf(this.get('mode')) > -1) {
-                    this.setupClient();
+                    //connect to our server
+                    if (['client', 'relay'].indexOf(this.get('mode')) > -1) {
+                        this.setupClient();
 
-                }
+                    }
 
-                return this.all({
-                    _cleaner: this.parent.forge('util/EventCleaner')
-                });
+                    return this.all({
+                        _cleaner: this.parent.forge('util/EventCleaner')
+                    });
 
-            }.bind(this)).then(function (deps) {
+                }.bind(this)).then(function (deps) {
 
-                declare.safeMixin(this, deps);
+                    declare.safeMixin(this, deps);
 
-                return this;
+                    return this;
 
-            }.bind(this));
+                }.bind(this));
 
         },
 
@@ -142,6 +142,15 @@ define(['altair/facades/declare',
                 this.client().emit(event, data);
             }
 
+        },
+
+        /**
+         * In client mode, tells us if we are connected.
+         *
+         * @returns {*|boolean}
+         */
+        isConnected: function () {
+            return this.client() && this.client().isConnected();
         },
 
         /**
@@ -231,7 +240,7 @@ define(['altair/facades/declare',
             } else {
 
                 this._http = http.createServer();
-                this._server = io.listen(this._http, { path: this.get('path'), log: false });
+                this._server = io.listen(this._http, { path: this.get('path')});
 
                 this._http.on('error', function (err) {
                     console.log(err);

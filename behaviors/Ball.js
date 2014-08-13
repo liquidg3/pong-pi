@@ -5,7 +5,6 @@ define(['altair/facades/declare',
 
     return declare([_Base], {
 
-        startDirection: -1, //1 === right, -1 === left
         velocity:       null,
         collision:      null,
         lastPlayer:     null,
@@ -19,8 +18,8 @@ define(['altair/facades/declare',
             });
 
             //pick a random direction and speed
-            this.velocity.speed     = this.vc.ballSpeed;
-            this.velocity.direction = (Math.random() - 0.5) * 16;
+            this.velocity.speed     = this.vc.ballSpeed + Math.ceil((Math.random() - 0.5) * 4);
+            this.velocity.direction = (Math.random() - 0.5) * 45;
 
             //randomly decide if we're going to throw the ball left or right
             if ((Math.random() - 0.5) * 2 > 0) {
@@ -36,15 +35,15 @@ define(['altair/facades/declare',
             var view = this.view;
 
             //our we at the bottom?
-            if (view.frame.top + view.frame.height > view.vc.view.frame.height) {
+            if (view.frame.top + view.frame.height >= this.vc.playableRect.height) {
 
-                view.frame.top = view.vc.view.frame.height - view.frame.height;
+                view.frame.top = this.vc.playableRect.height - view.frame.height;
 
                 this.velocity.direction = -this.velocity.direction;
 
             }
             //off to the right
-            else if (view.frame.left + view.frame.width >= view.vc.view.frame.width) {
+            else if (view.frame.left + view.frame.width >= view.vc.playableRect.width) {
 
                 this.view.vc.emit('score', {
                     side: 'left', //the left side scores if it goes to the right
@@ -56,7 +55,7 @@ define(['altair/facades/declare',
 
             }
             //off to the left
-            else if (view.frame.left <= 0) {
+            else if (view.frame.left < view.vc.playableRect.left) {
 
                 view.vc.emit('score', {
                     side: 'right', //the right side scores if it goes to the left
@@ -68,9 +67,9 @@ define(['altair/facades/declare',
 
             }
             //off the top
-            else if (view.frame.top < 0) {
+            else if (view.frame.top < view.vc.playableRect.top) {
 
-                view.frame.top = view.vc.view.frame.top;
+                view.frame.top = this.vc.playableRect.top;
 
                 this.velocity.direction = -this.velocity.direction;
 
