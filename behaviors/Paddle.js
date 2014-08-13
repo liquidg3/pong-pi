@@ -32,7 +32,7 @@ define(['altair/facades/declare',
                 this.top += this._inertia;
             }
 
-            this._inertia = this._inertia/damper;
+            this._inertia = this._inertia / damper;
 
 
             if (this.top > -999) {
@@ -66,6 +66,7 @@ define(['altair/facades/declare',
             this.top =  max - data.distance * max;
 
             if (this.enableInertia) {
+
                 lastPosition = {
                     //x: this.lastFrame.left,
                     y: this.lastFrame.top
