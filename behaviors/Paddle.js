@@ -7,7 +7,7 @@ define(['altair/facades/declare',
 
         player: null,
         top:    -999,
-        enableInertia: false,
+        enableInertia: true,
         _inertia: 0,
         _lastDirection: 0,
         _idle: false,

@@ -17,11 +17,11 @@ define(['altair/facades/declare',
         ],
         balls:                       null,  //all the active balls
         ballSpeed:                   10,     //how fast do your balls move
-        paddleColumnWidth:           200,   //each player fits into a column, this is that columns width (the smaller, the closer each paddle will be)
-        paddleWidth:                 10,    //how wide is the paddle?
-        paddleHeight:                100,   //how tall is the paddle?
-        sidePadding:                 100,   //how far in from the side will each paddle start
-        ballRadius:                  10,    //starting ball radius
+        paddleColumnWidth:           30,   //each player fits into a column, this is that columns width (the smaller, the closer each paddle will be)
+        paddleWidth:                 5,    //how wide is the paddle?
+        paddleHeight:                60,   //how tall is the paddle?
+        sidePadding:                 50,   //how far in from the side will each paddle start
+        ballRadius:                  5,    //starting ball radius
         currentColor:                null,  //background color tracking
         players:                     null,  //players by side
         playableRect:                null,  //the screen bounds within which all visual game components is confined to taking place within
